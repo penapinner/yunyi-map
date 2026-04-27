@@ -106,7 +106,7 @@
             border-left: 1px solid var(--border);
             display: flex; flex-direction: column; z-index: 500;
             transition: transform 0.3s, width 0.3s; box-shadow: -2px 0 8px var(--shadow);
-            flex-shrink: 0;
+            flex-shrink: 0; overflow: hidden;
         }
         .sidebar.collapsed { width: 0; overflow: hidden; border-left: none; box-shadow: none; }
         .sidebar-header {
@@ -128,6 +128,8 @@
             display: flex; gap: 4px; padding: 12px 20px;
             border-bottom: 1px solid var(--border); background: var(--bg);
         }
+        #listView, #calendarView { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+        #calendarView { display: none; }
         .filter-tab {
             padding: 6px 14px; border-radius: 20px; font-size: 12px;
             border: 1px solid transparent; background: transparent;
@@ -427,7 +429,7 @@
                 <div class="stats-bar" id="statsBar"></div>
                 <div class="trip-list" id="tripList"></div>
             </div>
-            <div id="calendarView" style="display:none;">
+            <div id="calendarView">
                 <div class="filter-tabs" id="filterTabsCal">
                     <button class="filter-tab active" onclick="filterTrips('all', this)">全部</button>
                     <button class="filter-tab" onclick="filterTrips('yunqi', this)">云旗</button>
@@ -623,6 +625,8 @@
         { id: 'b44', type: 'trip', date: '2026-04-27', from: '曼谷', to: '上海', fromCoord: [13.69, 100.75], toCoord: [31.23, 121.47], persons: ['yunqi'], desc: '云旗从曼谷素万那普机场飞往上海', transport: 'flight' },
 
         // ====== 郝熠然单人行程 ======
+        { id: 'b0', type: 'event', date: '2025-04-08', location: '横店八面咖啡', coord: [29.18, 120.33], persons: ['yunqi','haoyiran'], desc: '两人在横店的 eight face coffee（八面咖啡）第一次相见，下午3点', link: 'https://www.dianping.com' },
+
         { id: 'h1', type: 'event', date: '2025-04-01', location: '横店', coord: [29.16, 120.29], persons: ['haoyiran'], desc: '《她唇之上》杀青，杀青微博已隐藏' },
         { id: 'h2', type: 'event', date: '2025-12-12', location: '北京', coord: [39.88, 116.53], persons: ['haoyiran'], desc: '拍《So figaro》单人封面，在东西影棚拍' },
         { id: 'h3', type: 'trip', date: '2025-12-16', from: '北京', to: '重庆', fromCoord: [39.52, 116.43], toCoord: [29.72, 106.66], persons: ['haoyiran'], desc: '北京飞重庆，拍商务', transport: 'flight' },
@@ -752,10 +756,25 @@
     function initMap() {
         map = L.map('map', { center: [30, 110], zoom: 4, zoomControl: false });
         L.control.zoom({ position: 'bottomright' }).addTo(map);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+
+        // ArcGIS 矢量底图（默认）
+        const arcgis = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.arcgis.com/">Esri</a>',
+            maxZoom: 20
+        });
+        // CARTO Light 底图
+        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
             subdomains: 'abcd', maxZoom: 20
-        }).addTo(map);
+        });
+
+        // 添加底图切换控件
+        L.control.layers({
+            'ArcGIS 街道': arcgis,
+            'CARTO 简约': cartoLight
+        }, null, { position: 'topright', collapsed: false }).addTo(map);
+
+        arcgis.addTo(map);
         renderMap();
     }
     function renderMap() {
@@ -849,8 +868,8 @@
         currentView = view;
         document.getElementById('btnList').classList.toggle('active', view === 'list');
         document.getElementById('btnCalendar').classList.toggle('active', view === 'calendar');
-        document.getElementById('listView').style.display = view === 'list' ? '' : 'none';
-        document.getElementById('calendarView').style.display = view === 'calendar' ? '' : 'none';
+        document.getElementById('listView').style.display = view === 'list' ? 'flex' : 'none';
+        document.getElementById('calendarView').style.display = view === 'calendar' ? 'flex' : 'none';
         if (view === 'calendar') renderCalendar();
     }
 
@@ -1104,11 +1123,11 @@
         const bothCount = filtered.filter(i => i.persons.includes('yunqi') && i.persons.includes('haoyiran')).length;
 
         echartsInstances[0].setOption({
-            tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+            tooltip: { trigger: 'item', formatter: function(p) { return p.name + ': ' + p.value + ' (' + (p.percent !== undefined ? p.percent : (p.data && p.data.percent !== undefined ? p.data.percent : '--')) + '%)'; } },
             series: [{
                 type: 'sunburst',
                 radius: ['15%', '90%'],
-                label: { rotate: 'radial', fontSize: 11, fontFamily: 'Noto Sans SC' },
+                label: { rotate: 'radial', fontSize: 11, fontFamily: 'Noto Sans SC', formatter: function(p) { return p.name + ' ' + (p.percent !== undefined ? p.percent + '%' : ''); } },
                 data: [
                     { name: '云旗', value: yqCount, itemStyle: { color: '#F57C00' },
                       children: [
@@ -1148,8 +1167,8 @@
 
         echartsInstances[1].setOption({
             tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-            legend: { data: ['云旗', '郝熠然', '双人'], bottom: 0, textStyle: { fontSize: 11, fontFamily: 'Noto Sans SC' } },
-            grid: { top: 10, right: 10, bottom: 30, left: 40 },
+            legend: { data: ['云旗', '郝熠然', '双人'], top: 0, textStyle: { fontSize: 11, fontFamily: 'Noto Sans SC' } },
+            grid: { top: 30, right: 10, bottom: 25, left: 40 },
             xAxis: { type: 'category', data: monthLabels, axisLabel: { fontSize: 10, fontFamily: 'Noto Sans SC' }, axisTick: { show: false } },
             yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } } },
             series: [
