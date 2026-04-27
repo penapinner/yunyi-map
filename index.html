@@ -10,23 +10,27 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 
         :root {
-            --orange: #FF8C00;
-            --red: #E74C3C;
-            --cyan: #00BCD4;
-            --bg: #0f1923;
-            --bg-card: #1a2736;
-            --bg-card-hover: #223345;
-            --text: #E8EAED;
-            --text-muted: #9AA0A6;
-            --accent: #4FC3F7;
-            --border: #2a3a4a;
-            --shadow: rgba(0,0,0,0.4);
+            --orange: #F57C00;
+            --red: #E53935;
+            --cyan: #00ACC1;
+            --bg: #F5F7FA;
+            --bg-white: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #FAFBFC;
+            --text: #1A202C;
+            --text-secondary: #4A5568;
+            --text-muted: #A0AEC0;
+            --accent: #3182CE;
+            --accent-light: #EBF4FF;
+            --border: #E2E8F0;
+            --shadow: rgba(0,0,0,0.08);
+            --shadow-md: rgba(0,0,0,0.12);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Noto Sans SC', sans-serif;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow: hidden;
@@ -36,7 +40,7 @@
         /* ===== Top Navigation ===== */
         .topbar {
             height: 56px;
-            background: linear-gradient(135deg, #1a2736 0%, #0f1923 100%);
+            background: var(--bg-white);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -44,6 +48,7 @@
             padding: 0 24px;
             position: relative;
             z-index: 1000;
+            box-shadow: 0 1px 3px var(--shadow);
         }
 
         .topbar-left {
@@ -53,18 +58,17 @@
         }
 
         .topbar-logo {
-            width: 32px; height: 32px;
+            width: 36px; height: 36px;
             background: linear-gradient(135deg, var(--cyan), var(--orange));
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
             font-size: 16px; color: white; font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,188,193,0.3);
         }
 
         .topbar-title {
             font-size: 18px; font-weight: 700;
-            background: linear-gradient(90deg, var(--cyan), var(--orange));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text);
         }
 
         .topbar-right {
@@ -72,7 +76,7 @@
         }
 
         .legend {
-            display: flex; gap: 16px; font-size: 13px;
+            display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary);
         }
 
         .legend-item {
@@ -84,31 +88,33 @@
         }
 
         .btn {
-            padding: 7px 16px; border-radius: 8px; border: none;
+            padding: 8px 16px; border-radius: 8px; border: none;
             font-family: inherit; font-size: 13px; font-weight: 500;
             cursor: pointer; transition: all 0.2s;
             display: flex; align-items: center; gap: 6px;
         }
 
         .btn-primary {
-            background: var(--accent); color: #0f1923;
+            background: var(--accent); color: white;
+            box-shadow: 0 2px 6px rgba(49,130,206,0.3);
         }
-        .btn-primary:hover { background: #81D4FA; transform: translateY(-1px); }
+        .btn-primary:hover { background: #2B6CB0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(49,130,206,0.4); }
 
         .btn-outline {
-            background: transparent; color: var(--text-muted);
+            background: transparent; color: var(--text-secondary);
             border: 1px solid var(--border);
         }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
         .btn-danger {
-            background: #e74c3c33; color: #E74C3C; border: 1px solid #e74c3c44;
+            background: #FED7D7; color: #E53E3E; border: 1px solid #FEB2B2;
         }
-        .btn-danger:hover { background: #e74c3c55; }
+        .btn-danger:hover { background: #FEB2B2; }
 
         .btn-admin {
-            background: linear-gradient(135deg, #FF8C00, #FF6B35);
+            background: linear-gradient(135deg, #F57C00, #EF6C00);
             color: white; font-weight: 600;
+            box-shadow: 0 2px 6px rgba(245,124,0,0.3);
         }
 
         /* ===== Main Layout ===== */
@@ -124,17 +130,17 @@
         }
 
         .leaflet-popup-content-wrapper {
-            background: var(--bg-card) !important;
+            background: var(--bg-white) !important;
             color: var(--text) !important;
             border-radius: 12px !important;
-            box-shadow: 0 8px 32px var(--shadow) !important;
+            box-shadow: 0 4px 24px var(--shadow-md) !important;
             border: 1px solid var(--border) !important;
         }
-        .leaflet-popup-tip { background: var(--bg-card) !important; }
-        .leaflet-popup-content { margin: 12px 16px !important; }
+        .leaflet-popup-tip { background: var(--bg-white) !important; border: 1px solid var(--border) !important; border-top: none !important; border-left: none !important; }
+        .leaflet-popup-content { margin: 12px 16px !important; line-height: 1.5 !important; }
 
         .popup-title {
-            font-size: 15px; font-weight: 700; margin-bottom: 4px;
+            font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--text);
         }
         .popup-date { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
         .popup-persons { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -148,39 +154,30 @@
             margin-bottom: 8px;
         }
         .popup-images img {
-            width: 60px; height: 60px; border-radius: 6px; object-fit: cover;
+            width: 60px; height: 60px; border-radius: 8px; object-fit: cover;
             border: 1px solid var(--border);
         }
-
-        .popup-comments {
-            max-height: 120px; overflow-y: auto; margin-bottom: 8px;
-        }
-        .popup-comment {
-            font-size: 12px; padding: 6px 8px;
-            background: rgba(255,255,255,0.04); border-radius: 6px;
-            margin-bottom: 4px;
-        }
-        .popup-comment-author { color: var(--accent); font-weight: 500; }
 
         .popup-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
         .popup-btn {
             font-size: 11px; padding: 4px 10px; border-radius: 6px;
-            border: 1px solid var(--border); background: transparent;
-            color: var(--text-muted); cursor: pointer; font-family: inherit;
+            border: 1px solid var(--border); background: var(--bg-white);
+            color: var(--text-secondary); cursor: pointer; font-family: inherit;
             transition: all 0.2s;
         }
-        .popup-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .popup-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
         /* ===== Sidebar ===== */
         .sidebar {
             width: 380px;
-            background: var(--bg-card);
+            background: var(--bg-white);
             border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             z-index: 500;
             transition: transform 0.3s;
+            box-shadow: -2px 0 8px var(--shadow);
         }
 
         .sidebar.collapsed {
@@ -196,24 +193,26 @@
         }
 
         .sidebar-header h3 {
-            font-size: 16px; font-weight: 700;
+            font-size: 16px; font-weight: 700; color: var(--text);
         }
 
         .filter-tabs {
             display: flex; gap: 4px; padding: 12px 20px;
             border-bottom: 1px solid var(--border);
+            background: var(--bg);
         }
 
         .filter-tab {
-            padding: 5px 12px; border-radius: 6px; font-size: 12px;
-            border: 1px solid var(--border); background: transparent;
+            padding: 6px 14px; border-radius: 20px; font-size: 12px;
+            border: 1px solid transparent; background: transparent;
             color: var(--text-muted); cursor: pointer; font-family: inherit;
-            transition: all 0.2s;
+            transition: all 0.2s; font-weight: 500;
         }
-        .filter-tab.active, .filter-tab:hover {
-            background: var(--accent); color: #0f1923;
-            border-color: var(--accent); font-weight: 600;
+        .filter-tab.active {
+            background: var(--accent); color: white;
+            box-shadow: 0 2px 6px rgba(49,130,206,0.3);
         }
+        .filter-tab:hover:not(.active) { color: var(--text-secondary); background: #EDF2F7; }
 
         .trip-list {
             flex: 1;
@@ -223,10 +222,10 @@
 
         .trip-list::-webkit-scrollbar { width: 4px; }
         .trip-list::-webkit-scrollbar-track { background: transparent; }
-        .trip-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .trip-list::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
 
         .trip-card {
-            background: rgba(255,255,255,0.03);
+            background: var(--bg-white);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 14px;
@@ -248,14 +247,13 @@
         .trip-card.type-both::before { background: var(--cyan); }
 
         .trip-card:hover {
-            background: var(--bg-card-hover);
+            box-shadow: 0 4px 12px var(--shadow-md);
             transform: translateY(-1px);
-            box-shadow: 0 4px 16px var(--shadow);
         }
 
         .trip-card.active {
             border-color: var(--accent);
-            background: var(--bg-card-hover);
+            box-shadow: 0 4px 12px rgba(49,130,206,0.15);
         }
 
         .trip-card-top {
@@ -264,7 +262,7 @@
         }
 
         .trip-route {
-            font-size: 14px; font-weight: 600;
+            font-size: 14px; font-weight: 600; color: var(--text);
         }
 
         .trip-type-badge {
@@ -291,7 +289,7 @@
 
         .trip-card-btn {
             font-size: 11px; padding: 3px 8px; border-radius: 5px;
-            border: 1px solid var(--border); background: transparent;
+            border: 1px solid var(--border); background: var(--bg-white);
             color: var(--text-muted); cursor: pointer; font-family: inherit;
         }
         .trip-card-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -299,7 +297,7 @@
         /* ===== Modal ===== */
         .modal-overlay {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.3);
             backdrop-filter: blur(4px);
             display: none; align-items: center; justify-content: center;
             z-index: 2000;
@@ -307,13 +305,13 @@
         .modal-overlay.active { display: flex; }
 
         .modal {
-            background: var(--bg-card);
+            background: var(--bg-white);
             border: 1px solid var(--border);
             border-radius: 16px;
             width: 520px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
 
         .modal-header {
@@ -321,53 +319,54 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        .modal-header h3 { font-size: 18px; font-weight: 700; }
+        .modal-header h3 { font-size: 18px; font-weight: 700; color: var(--text); }
 
         .modal-close {
             width: 32px; height: 32px; border-radius: 8px;
-            border: 1px solid var(--border); background: transparent;
+            border: 1px solid var(--border); background: var(--bg-white);
             color: var(--text-muted); cursor: pointer; font-size: 16px;
             display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
         }
-        .modal-close:hover { border-color: #E74C3C; color: #E74C3C; }
+        .modal-close:hover { border-color: #E53E3E; color: #E53E3E; background: #FFF5F5; }
 
         .modal-body { padding: 20px 24px 24px; }
 
         .form-group { margin-bottom: 16px; }
         .form-label {
             display: block; font-size: 13px; font-weight: 500;
-            margin-bottom: 6px; color: var(--text-muted);
+            margin-bottom: 6px; color: var(--text-secondary);
         }
 
         .form-input, .form-select, .form-textarea {
             width: 100%; padding: 10px 14px; border-radius: 8px;
             border: 1px solid var(--border);
-            background: rgba(255,255,255,0.04);
+            background: var(--bg);
             color: var(--text); font-family: inherit; font-size: 14px;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none; border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(49,130,206,0.1);
         }
+        .form-input::placeholder { color: var(--text-muted); }
         .form-textarea { min-height: 80px; resize: vertical; }
-        .form-select option { background: var(--bg-card); }
+        .form-select option { background: var(--bg-white); }
 
         .form-row { display: flex; gap: 12px; }
         .form-row .form-group { flex: 1; }
 
-        .person-checkboxes {
-            display: flex; gap: 12px;
-        }
+        .person-checkboxes { display: flex; gap: 12px; }
 
         .person-checkbox {
             display: flex; align-items: center; gap: 6px;
             padding: 8px 16px; border-radius: 8px;
             border: 1px solid var(--border); cursor: pointer;
-            transition: all 0.2s; font-size: 13px;
+            transition: all 0.2s; font-size: 13px; background: var(--bg-white);
         }
         .person-checkbox input { display: none; }
-        .person-checkbox.yunqi.checked { border-color: var(--orange); background: rgba(255,140,0,0.15); color: var(--orange); }
-        .person-checkbox.haoyiran.checked { border-color: var(--red); background: rgba(231,76,60,0.15); color: var(--red); }
+        .person-checkbox.yunqi.checked { border-color: var(--orange); background: #FFF3E0; color: var(--orange); }
+        .person-checkbox.haoyiran.checked { border-color: var(--red); background: #FFEBEE; color: var(--red); }
 
         .image-upload-area {
             border: 2px dashed var(--border);
@@ -376,8 +375,9 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            background: var(--bg);
         }
-        .image-upload-area:hover { border-color: var(--accent); }
+        .image-upload-area:hover { border-color: var(--accent); background: var(--accent-light); }
         .image-upload-area i { font-size: 24px; color: var(--text-muted); margin-bottom: 8px; }
         .image-upload-area p { font-size: 13px; color: var(--text-muted); }
 
@@ -385,52 +385,23 @@
             display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
         }
         .uploaded-images img {
-            width: 60px; height: 60px; border-radius: 6px; object-fit: cover;
+            width: 60px; height: 60px; border-radius: 8px; object-fit: cover;
             border: 1px solid var(--border);
         }
-
-        /* ===== Comment Section ===== */
-        .comment-section { margin-top: 12px; }
-        .comment-item {
-            display: flex; gap: 8px; padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .comment-avatar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: var(--accent); display: flex;
-            align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 600; color: #0f1923;
-            flex-shrink: 0;
-        }
-        .comment-content { flex: 1; }
-        .comment-author { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-        .comment-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-        .comment-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-
-        .comment-input-row {
-            display: flex; gap: 8px; margin-top: 12px;
-        }
-        .comment-input {
-            flex: 1; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.04);
-            color: var(--text); font-family: inherit; font-size: 13px;
-        }
-        .comment-input:focus { outline: none; border-color: var(--accent); }
 
         /* ===== Login Modal ===== */
         .login-options {
             display: flex; gap: 12px; margin-top: 12px;
         }
         .login-option {
-            flex: 1; padding: 16px; border-radius: 12px;
+            flex: 1; padding: 20px; border-radius: 12px;
             border: 2px solid var(--border); cursor: pointer;
-            text-align: center; transition: all 0.2s;
+            text-align: center; transition: all 0.2s; background: var(--bg);
         }
-        .login-option:hover { border-color: var(--accent); background: rgba(79,195,247,0.05); }
-        .login-option i { font-size: 24px; margin-bottom: 8px; display: block; }
-        .login-option .label { font-size: 14px; font-weight: 600; }
-        .login-option .desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .login-option:hover { border-color: var(--accent); background: var(--accent-light); }
+        .login-option i { font-size: 28px; margin-bottom: 10px; display: block; }
+        .login-option .label { font-size: 15px; font-weight: 600; color: var(--text); }
+        .login-option .desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
         /* ===== Toast ===== */
         .toast-container {
@@ -439,15 +410,15 @@
         }
         .toast {
             padding: 12px 20px; border-radius: 10px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            box-shadow: 0 8px 24px var(--shadow);
+            background: var(--bg-white); border: 1px solid var(--border);
+            box-shadow: 0 8px 24px var(--shadow-md);
             font-size: 13px; animation: slideIn 0.3s ease;
             display: flex; align-items: center; gap: 8px;
         }
-        .toast.success { border-color: #4CAF50; }
-        .toast.success i { color: #4CAF50; }
-        .toast.error { border-color: #E74C3C; }
-        .toast.error i { color: #E74C3C; }
+        .toast.success { border-color: #9AE6B4; }
+        .toast.success i { color: #38A169; }
+        .toast.error { border-color: #FEB2B2; }
+        .toast.error i { color: #E53E3E; }
 
         @keyframes slideIn {
             from { transform: translateX(100px); opacity: 0; }
@@ -489,9 +460,6 @@
             <button class="btn btn-outline" onclick="toggleSidebar()">
                 <i class="fas fa-list"></i> 行程列表
             </button>
-            <button class="btn btn-primary" id="roleBtn" onclick="showLoginModal()">
-                <i class="fas fa-user"></i> <span id="roleText">登录</span>
-            </button>
         </div>
     </div>
 
@@ -501,9 +469,6 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h3><i class="fas fa-map-marker-alt" style="color:var(--accent);margin-right:8px;"></i>行程列表</h3>
-                <button class="btn btn-primary" id="addTripBtn" onclick="showAddTripModal()" style="display:none;">
-                    <i class="fas fa-plus"></i> 添加行程
-                </button>
             </div>
             <div class="filter-tabs">
                 <button class="filter-tab active" onclick="filterTrips('all', this)">全部</button>
@@ -512,82 +477,6 @@
                 <button class="filter-tab" onclick="filterTrips('both', this)">双人</button>
             </div>
             <div class="trip-list" id="tripList"></div>
-        </div>
-    </div>
-
-    <!-- Add Trip Modal -->
-    <div class="modal-overlay" id="addTripModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px;"></i>添加行程</h3>
-                <button class="modal-close" onclick="closeModal('addTripModal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">出发地</label>
-                        <input class="form-input" id="fromPlace" placeholder="如：成都">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">目的地</label>
-                        <input class="form-input" id="toPlace" placeholder="如：曼谷">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">出发日期</label>
-                        <input class="form-input" id="tripDate" type="date">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">交通方式</label>
-                        <select class="form-select" id="tripTransport">
-                            <option value="flight">✈️ 飞机</option>
-                            <option value="train">🚄 火车</option>
-                            <option value="car">🚗 自驾</option>
-                            <option value="bus">🚌 大巴</option>
-                            <option value="walk">🚶 步行</option>
-                            <option value="other">🔗 其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">出发地坐标 (纬度, 经度)</label>
-                        <input class="form-input" id="fromCoord" placeholder="30.5728, 104.0668">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">目的地坐标 (纬度, 经度)</label>
-                        <input class="form-input" id="toCoord" placeholder="13.6900, 100.7501">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">出行人员</label>
-                    <div class="person-checkboxes">
-                        <label class="person-checkbox yunqi" onclick="togglePersonCheck(this)">
-                            <input type="checkbox" value="yunqi"> 🟠 云旗
-                        </label>
-                        <label class="person-checkbox haoyiran" onclick="togglePersonCheck(this)">
-                            <input type="checkbox" value="haoyiran"> 🔴 郝熠然
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">备注</label>
-                    <textarea class="form-textarea" id="tripDesc" placeholder="记录这次旅行的特别之处..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">上传图片</label>
-                    <div class="image-upload-area" onclick="document.getElementById('tripImages').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>点击或拖拽图片上传</p>
-                    </div>
-                    <input type="file" id="tripImages" multiple accept="image/*" style="display:none" onchange="previewTripImages(this)">
-                    <div class="uploaded-images" id="uploadedImages"></div>
-                </div>
-                <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="addTrip()">
-                    <i class="fas fa-check"></i> 确认添加
-                </button>
-            </div>
         </div>
     </div>
 
@@ -602,54 +491,17 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal" style="width:420px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-users" style="color:var(--accent);margin-right:8px;"></i>选择身份</h3>
-                <button class="modal-close" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">请选择你的身份以使用对应功能</p>
-                <div class="login-options">
-                    <div class="login-option" onclick="loginAs('admin')">
-                        <i class="fas fa-user-shield" style="color:var(--orange);"></i>
-                        <div class="label">管理员</div>
-                        <div class="desc">添加/编辑/删除行程</div>
-                    </div>
-                    <div class="login-option" onclick="loginAs('guest')">
-                        <i class="fas fa-user" style="color:var(--accent);"></i>
-                        <div class="label">游客</div>
-                        <div class="desc">浏览、评论、上传图片</div>
-                    </div>
-                </div>
-                <div id="guestNameSection" style="display:none;margin-top:16px;">
-                    <div class="form-group">
-                        <label class="form-label">你的昵称</label>
-                        <input class="form-input" id="guestName" placeholder="输入昵称以便评论显示">
-                    </div>
-                    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="confirmGuest()">
-                        <i class="fas fa-check"></i> 确认
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
     // ===== State =====
-    let currentRole = null; // 'admin' | 'guest'
-    let guestName = '';
     let currentFilter = 'all';
     let map, routeLayers = [], markerLayers = [];
-    let pendingImages = [];
 
     // ===== Preset Trip Data =====
-    let trips = [
+    const trips = [
         {
             id: 1,
             from: '成都',
@@ -659,9 +511,7 @@
             date: '2026-04-24',
             transport: 'flight',
             persons: ['yunqi', 'haoyiran'],
-            desc: '两人从成都出发，飞往曼谷开启泰国之旅',
-            images: [],
-            comments: []
+            desc: '两人从成都出发，飞往曼谷开启泰国之旅'
         },
         {
             id: 2,
@@ -672,9 +522,7 @@
             date: '2026-04-27',
             transport: 'flight',
             persons: ['haoyiran'],
-            desc: '郝熠然从曼谷飞回北京',
-            images: [],
-            comments: []
+            desc: '郝熠然从曼谷飞回北京'
         },
         {
             id: 3,
@@ -685,27 +533,9 @@
             date: '2026-04-27',
             transport: 'flight',
             persons: ['yunqi'],
-            desc: '云旗从曼谷飞往上海',
-            images: [],
-            comments: []
+            desc: '云旗从曼谷飞往上海'
         }
     ];
-
-    let nextId = 4;
-
-    // ===== Save / Load from localStorage =====
-    function saveData() {
-        localStorage.setItem('travelTrips', JSON.stringify(trips));
-        localStorage.setItem('travelNextId', nextId);
-    }
-
-    function loadData() {
-        const saved = localStorage.getItem('travelTrips');
-        if (saved) {
-            trips = JSON.parse(saved);
-            nextId = parseInt(localStorage.getItem('travelNextId')) || trips.length + 1;
-        }
-    }
 
     // ===== Map Initialization =====
     function initMap() {
@@ -717,7 +547,7 @@
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 20
@@ -737,9 +567,9 @@
     function getTripColor(trip) {
         const type = getTripType(trip);
         switch(type) {
-            case 'yunqi': return '#FF8C00';
-            case 'haoyiran': return '#E74C3C';
-            case 'both': return '#00BCD4';
+            case 'yunqi': return '#F57C00';
+            case 'haoyiran': return '#E53935';
+            case 'both': return '#00ACC1';
         }
     }
 
@@ -764,7 +594,6 @@
 
     // ===== Render Routes =====
     function renderAllRoutes() {
-        // Clear existing
         routeLayers.forEach(l => map.removeLayer(l));
         markerLayers.forEach(l => map.removeLayer(l));
         routeLayers = [];
@@ -774,19 +603,15 @@
 
         filtered.forEach(trip => {
             const color = getTripColor(trip);
-            const type = getTripType(trip);
 
-            // Draw curved flight path
             const line = drawCurvedLine(trip.fromCoord, trip.toCoord, color);
             if (line) routeLayers.push(line);
 
-            // Origin marker
             const fromIcon = createMarkerIcon(trip.from.charAt(0), color, false);
             const fromMarker = L.marker(trip.fromCoord, { icon: fromIcon }).addTo(map);
             fromMarker.bindPopup(createPopupContent(trip, 'from'));
             markerLayers.push(fromMarker);
 
-            // Destination marker
             const toIcon = createMarkerIcon(trip.to.charAt(0), color, true);
             const toMarker = L.marker(trip.toCoord, { icon: toIcon }).addTo(map);
             toMarker.bindPopup(createPopupContent(trip, 'to'));
@@ -801,7 +626,6 @@
             const t = i / steps;
             const lat = from[0] + (to[0] - from[0]) * t;
             const lng = from[1] + (to[1] - from[1]) * t;
-            // Arc offset based on distance
             const dist = Math.sqrt(Math.pow(to[0] - from[0], 2) + Math.pow(to[1] - from[1], 2));
             const arcHeight = dist * 0.15;
             const latOffset = Math.sin(t * Math.PI) * arcHeight;
@@ -810,23 +634,23 @@
         const line = L.polyline(points, {
             color: color,
             weight: 2.5,
-            opacity: 0.7,
+            opacity: 0.8,
             dashArray: '8, 6'
         }).addTo(map);
         return line;
     }
 
     function createMarkerIcon(letter, color, isDestination) {
-        const size = isDestination ? 28 : 22;
-        const fontSize = isDestination ? 13 : 11;
+        const size = isDestination ? 30 : 24;
+        const fontSize = isDestination ? 14 : 11;
         return L.divIcon({
             className: 'custom-marker',
             html: `<div style="
                 width:${size}px;height:${size}px;border-radius:50%;
-                background:${color};border:2px solid white;
+                background:${color};border:3px solid white;
                 display:flex;align-items:center;justify-content:center;
                 font-size:${fontSize}px;font-weight:700;color:white;
-                box-shadow:0 2px 8px rgba(0,0,0,0.4);
+                box-shadow:0 2px 8px rgba(0,0,0,0.2);
                 font-family:'Noto Sans SC',sans-serif;
             ">${letter}</div>`,
             iconSize: [size, size],
@@ -838,47 +662,27 @@
     // ===== Popup Content =====
     function createPopupContent(trip, side) {
         const color = getTripColor(trip);
-        const type = getTripType(trip);
-        const typeName = getTypeName(type);
         const label = side === 'from' ? '出发' : '到达';
 
         let personBadges = '';
         if (trip.persons.includes('yunqi') && trip.persons.includes('haoyiran')) {
-            personBadges = '<span class="popup-badge" style="background:rgba(0,188,212,0.2);color:#00BCD4;">双人行程</span>';
+            personBadges = '<span class="popup-badge" style="background:#E0F7FA;color:#00ACC1;">🤝 双人行程</span>';
         } else {
             trip.persons.forEach(p => {
-                const c = p === 'yunqi' ? '#FF8C00' : '#E74C3C';
+                const c = p === 'yunqi' ? '#F57C00' : '#E53935';
                 const n = p === 'yunqi' ? '云旗' : '郝熠然';
-                personBadges += `<span class="popup-badge" style="background:${c}22;color:${c};">${n}</span>`;
+                personBadges += `<span class="popup-badge" style="background:${c}15;color:${c};">${n}</span>`;
             });
-        }
-
-        let imagesHtml = '';
-        if (trip.images && trip.images.length > 0) {
-            imagesHtml = '<div class="popup-images">' + trip.images.map(img =>
-                `<img src="${img}" alt="trip image">`
-            ).join('') + '</div>';
-        }
-
-        let commentsHtml = '';
-        if (trip.comments && trip.comments.length > 0) {
-            commentsHtml = '<div class="popup-comments">' + trip.comments.map(c =>
-                `<div class="popup-comment"><span class="popup-comment-author">${c.author}:</span> ${c.text}</div>`
-            ).join('') + '</div>';
-        }
-
-        let actions = `<button class="popup-btn" onclick="showTripDetail(${trip.id})"><i class="fas fa-expand"></i> 详情</button>`;
-        if (currentRole) {
-            actions += `<button class="popup-btn" onclick="showTripDetail(${trip.id})"><i class="fas fa-comment"></i> 评论</button>`;
         }
 
         return `
             <div class="popup-title">${side === 'from' ? trip.from : trip.to} <span style="color:${color};font-size:12px;">（${label}）</span></div>
             <div class="popup-date">${getTransportIcon(trip.transport)} ${trip.date} · ${trip.from} → ${trip.to}</div>
             <div class="popup-persons">${personBadges}</div>
-            ${imagesHtml}
-            ${commentsHtml}
-            <div class="popup-actions">${actions}</div>
+            <p style="font-size:12px;color:#718096;margin-top:4px;">${trip.desc || ''}</p>
+            <div class="popup-actions" style="margin-top:8px;">
+                <button class="popup-btn" onclick="showTripDetail(${trip.id})"><i class="fas fa-expand"></i> 详情与评论</button>
+            </div>
         `;
     }
 
@@ -898,20 +702,17 @@
             const typeName = getTypeName(type);
 
             return `
-                <div class="trip-card type-${type}" onclick="flyToTrip(${trip.id})" data-type="${type}">
+                <div class="trip-card type-${type}" onclick="flyToTrip(${trip.id})">
                     <div class="trip-card-top">
                         <div class="trip-route">${getTransportIcon(trip.transport)} ${trip.from} → ${trip.to}</div>
-                        <span class="trip-type-badge" style="background:${color}22;color:${color};">${typeName}</span>
+                        <span class="trip-type-badge" style="background:${color}15;color:${color};">${typeName}</span>
                     </div>
                     <div class="trip-meta">
                         <span><i class="fas fa-calendar-alt"></i>${trip.date}</span>
-                        <span><i class="fas fa-comment"></i>${(trip.comments||[]).length} 评论</span>
-                        <span><i class="fas fa-image"></i>${(trip.images||[]).length} 图片</span>
                     </div>
                     <div class="trip-desc">${trip.desc || '暂无备注'}</div>
                     <div class="trip-card-actions">
                         <button class="trip-card-btn" onclick="event.stopPropagation();showTripDetail(${trip.id})"><i class="fas fa-eye"></i> 详情</button>
-                        ${currentRole === 'admin' ? `<button class="trip-card-btn" onclick="event.stopPropagation();deleteTrip(${trip.id})" style="color:#E74C3C;border-color:#e74c3c44;"><i class="fas fa-trash"></i> 删除</button>` : ''}
                     </div>
                 </div>
             `;
@@ -944,64 +745,16 @@
 
         const color = getTripColor(trip);
         const type = getTripType(trip);
-        const typeName = getTypeName(type);
 
         let personBadges = '';
         if (trip.persons.includes('yunqi') && trip.persons.includes('haoyiran')) {
-            personBadges = '<span class="popup-badge" style="background:rgba(0,188,212,0.2);color:#00BCD4;font-size:13px;padding:4px 12px;">🤝 双人行程</span>';
+            personBadges = '<span class="popup-badge" style="background:#E0F7FA;color:#00ACC1;font-size:13px;padding:4px 12px;">🤝 双人行程</span>';
         } else {
             trip.persons.forEach(p => {
-                const c = p === 'yunqi' ? '#FF8C00' : '#E74C3C';
+                const c = p === 'yunqi' ? '#F57C00' : '#E53935';
                 const n = p === 'yunqi' ? '云旗' : '郝熠然';
-                personBadges += `<span class="popup-badge" style="background:${c}22;color:${c};font-size:13px;padding:4px 12px;">${n}</span>`;
+                personBadges += `<span class="popup-badge" style="background:${c}15;color:${c};font-size:13px;padding:4px 12px;">${n}</span>`;
             });
-        }
-
-        let imagesHtml = '';
-        if (trip.images && trip.images.length > 0) {
-            imagesHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">' +
-                trip.images.map(img => `<img src="${img}" style="width:100px;height:100px;border-radius:8px;object-fit:cover;border:1px solid var(--border);">`).join('') +
-                '</div>';
-        } else {
-            imagesHtml = '<p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">暂无图片</p>';
-        }
-
-        let commentsHtml = '';
-        if (trip.comments && trip.comments.length > 0) {
-            commentsHtml = trip.comments.map(c => `
-                <div class="comment-item">
-                    <div class="comment-avatar">${c.author.charAt(0)}</div>
-                    <div class="comment-content">
-                        <div class="comment-author">${c.author}</div>
-                        <div class="comment-text">${c.text}</div>
-                        <div class="comment-time">${c.time || ''}</div>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            commentsHtml = '<p style="font-size:12px;color:var(--text-muted);">暂无评论，来说点什么吧~</p>';
-        }
-
-        // Guest can add comments and images
-        let guestActions = '';
-        if (currentRole === 'guest' || currentRole === 'admin') {
-            guestActions = `
-                <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-                    <h4 style="font-size:14px;margin-bottom:12px;"><i class="fas fa-camera" style="color:var(--accent);margin-right:6px;"></i>添加图片</h4>
-                    <div class="image-upload-area" onclick="document.getElementById('detailImageInput').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>点击上传图片</p>
-                    </div>
-                    <input type="file" id="detailImageInput" multiple accept="image/*" style="display:none" onchange="addDetailImages(${trip.id}, this)">
-                </div>
-                <div class="comment-section">
-                    <h4 style="font-size:14px;margin-bottom:12px;"><i class="fas fa-comments" style="color:var(--accent);margin-right:6px;"></i>添加评论</h4>
-                    <div class="comment-input-row">
-                        <input class="comment-input" id="commentInput_${trip.id}" placeholder="写下你的评论...">
-                        <button class="btn btn-primary" onclick="addComment(${trip.id})"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            `;
         }
 
         document.getElementById('detailTitle').innerHTML = `${getTransportIcon(trip.transport)} ${trip.from} → ${trip.to}`;
@@ -1010,239 +763,51 @@
                 ${personBadges}
                 <span style="margin-left:8px;font-size:13px;color:var(--text-muted);"><i class="fas fa-calendar-alt"></i> ${trip.date}</span>
             </div>
-            <p style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:16px;">${trip.desc || '暂无备注'}</p>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <h4 style="font-size:14px;"><i class="fas fa-image" style="color:var(--accent);margin-right:6px;"></i>图片 (${(trip.images||[]).length})</h4>
+            <p style="font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:20px;">${trip.desc || '暂无备注'}</p>
+            <div style="padding-top:16px;border-top:1px solid var(--border);">
+                <h4 style="font-size:14px;margin-bottom:12px;color:var(--text);"><i class="fas fa-comments" style="color:var(--accent);margin-right:6px;"></i>留言板</h4>
+                <div class="giscus-wrapper" data-giscus-path="trip-${trip.id}"></div>
             </div>
-            ${imagesHtml}
-            <h4 style="font-size:14px;margin-bottom:12px;"><i class="fas fa-comments" style="color:var(--accent);margin-right:6px;"></i>评论 (${(trip.comments||[]).length})</h4>
-            ${commentsHtml}
-            ${guestActions}
         `;
 
         openModal('tripDetailModal');
+
+        // Render giscus in modal
+        setTimeout(() => {
+            renderGiscus(`trip-${trip.id}`);
+        }, 100);
     }
 
-    // ===== Comments =====
-    function addComment(tripId) {
-        const input = document.getElementById(`commentInput_${tripId}`);
-        const text = input.value.trim();
-        if (!text) { showToast('请输入评论内容', 'error'); return; }
+    // ===== Giscus Comment System =====
+    let currentGiscusContainer = null;
 
-        const trip = trips.find(t => t.id === tripId);
-        if (!trip) return;
+    function renderGiscus(term) {
+        // Remove old giscus if exists
+        const old = document.querySelector('.giscus-wrapper iframe');
+        if (old) old.remove();
+        const oldScript = document.querySelector('.giscus-wrapper script');
+        if (oldScript) oldScript.remove();
 
-        if (!trip.comments) trip.comments = [];
+        const wrapper = document.querySelector('.giscus-wrapper');
+        if (!wrapper) return;
 
-        const author = currentRole === 'admin' ? '管理员' : (guestName || '游客');
-        const now = new Date();
-        const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-        trip.comments.push({ author, text, time: timeStr });
-        saveData();
-        showToast('评论成功！', 'success');
-        showTripDetail(tripId);
-        renderAllRoutes();
-        renderTripList();
-    }
-
-    // ===== Add Images to Trip (Detail View) =====
-    function addDetailImages(tripId, input) {
-        const trip = trips.find(t => t.id === tripId);
-        if (!trip) return;
-        if (!trip.images) trip.images = [];
-
-        const files = input.files;
-        let loaded = 0;
-        const total = files.length;
-
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                trip.images.push(e.target.result);
-                loaded++;
-                if (loaded === total) {
-                    saveData();
-                    showToast(`成功添加 ${total} 张图片！`, 'success');
-                    showTripDetail(tripId);
-                    renderAllRoutes();
-                    renderTripList();
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // ===== Add Trip =====
-    function showAddTripModal() {
-        if (currentRole !== 'admin') {
-            showToast('只有管理员才能添加行程', 'error');
-            return;
-        }
-        openModal('addTripModal');
-        pendingImages = [];
-        document.getElementById('uploadedImages').innerHTML = '';
-        // Reset form
-        ['fromPlace','toPlace','tripDate','fromCoord','toCoord','tripDesc'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
-        document.querySelectorAll('.person-checkbox').forEach(cb => {
-            cb.classList.remove('checked');
-            cb.querySelector('input').checked = false;
-        });
-    }
-
-    function togglePersonCheck(label) {
-        const cb = label.querySelector('input');
-        cb.checked = !cb.checked;
-        label.classList.toggle('checked', cb.checked);
-    }
-
-    function previewTripImages(input) {
-        const container = document.getElementById('uploadedImages');
-        container.innerHTML = '';
-        pendingImages = [];
-
-        Array.from(input.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                pendingImages.push(e.target.result);
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                container.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    function addTrip() {
-        const from = document.getElementById('fromPlace').value.trim();
-        const to = document.getElementById('toPlace').value.trim();
-        const date = document.getElementById('tripDate').value;
-        const transport = document.getElementById('tripTransport').value;
-        const fromCoordStr = document.getElementById('fromCoord').value.trim();
-        const toCoordStr = document.getElementById('toCoord').value.trim();
-        const desc = document.getElementById('tripDesc').value.trim();
-
-        const persons = [];
-        document.querySelectorAll('.person-checkbox').forEach(cb => {
-            if (cb.querySelector('input').checked) {
-                persons.push(cb.querySelector('input').value);
-            }
-        });
-
-        if (!from || !to) { showToast('请填写出发地和目的地', 'error'); return; }
-        if (!date) { showToast('请选择出发日期', 'error'); return; }
-        if (persons.length === 0) { showToast('请选择出行人员', 'error'); return; }
-
-        let fromCoord, toCoord;
-        try {
-            const fc = fromCoordStr.split(',').map(s => parseFloat(s.trim()));
-            const tc = toCoordStr.split(',').map(s => parseFloat(s.trim()));
-            if (fc.length !== 2 || tc.length !== 2 || fc.some(isNaN) || tc.some(isNaN)) throw new Error();
-            fromCoord = fc;
-            toCoord = tc;
-        } catch(e) {
-            showToast('坐标格式不正确，请使用: 纬度, 经度', 'error');
-            return;
-        }
-
-        const newTrip = {
-            id: nextId++,
-            from, to, fromCoord, toCoord,
-            date, transport, persons, desc,
-            images: [...pendingImages],
-            comments: []
-        };
-
-        trips.push(newTrip);
-        saveData();
-        closeModal('addTripModal');
-        showToast('行程添加成功！', 'success');
-        renderAllRoutes();
-        renderTripList();
-
-        // Fly to new trip
-        setTimeout(() => flyToTrip(newTrip.id), 300);
-    }
-
-    // ===== Delete Trip =====
-    function deleteTrip(id) {
-        if (currentRole !== 'admin') {
-            showToast('只有管理员才能删除行程', 'error');
-            return;
-        }
-        const trip = trips.find(t => t.id === id);
-        if (!trip) return;
-        if (!confirm(`确定删除「${trip.from} → ${trip.to}」行程吗？`)) return;
-
-        trips = trips.filter(t => t.id !== id);
-        saveData();
-        closeModal('tripDetailModal');
-        showToast('行程已删除', 'success');
-        renderAllRoutes();
-        renderTripList();
-    }
-
-    // ===== Login / Role =====
-    function showLoginModal() {
-        if (currentRole) {
-            // Already logged in, show option to logout
-            if (confirm(`当前身份：${currentRole === 'admin' ? '管理员' : '游客 ' + guestName}\n\n要退出登录吗？`)) {
-                currentRole = null;
-                guestName = '';
-                updateRoleUI();
-                showToast('已退出登录', 'success');
-                renderTripList();
-                renderAllRoutes();
-            }
-            return;
-        }
-        document.getElementById('guestNameSection').style.display = 'none';
-        openModal('loginModal');
-    }
-
-    function loginAs(role) {
-        currentRole = role;
-        closeModal('loginModal');
-        if (role === 'admin') {
-            guestName = '管理员';
-            updateRoleUI();
-            showToast('已登录为管理员', 'success');
-        } else {
-            document.getElementById('guestNameSection').style.display = 'block';
-            openModal('loginModal');
-            setTimeout(() => document.getElementById('guestName').focus(), 100);
-        }
-    }
-
-    function confirmGuest() {
-        const name = document.getElementById('guestName').value.trim();
-        if (!name) { showToast('请输入昵称', 'error'); return; }
-        guestName = name;
-        closeModal('loginModal');
-        updateRoleUI();
-        showToast(`欢迎，${guestName}！`, 'success');
-    }
-
-    function updateRoleUI() {
-        const btn = document.getElementById('roleBtn');
-        const text = document.getElementById('roleText');
-        const addBtn = document.getElementById('addTripBtn');
-
-        if (currentRole === 'admin') {
-            btn.className = 'btn btn-admin';
-            text.textContent = '管理员';
-            addBtn.style.display = 'flex';
-        } else if (currentRole === 'guest') {
-            btn.className = 'btn btn-primary';
-            text.textContent = guestName;
-            addBtn.style.display = 'none';
-        } else {
-            btn.className = 'btn btn-primary';
-            text.textContent = '登录';
-            addBtn.style.display = 'none';
-        }
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.setAttribute('data-repo', 'penapinner/yunyi-map');
+        script.setAttribute('data-repo-id', 'R_kgDOSN4YPg');
+        script.setAttribute('data-category', 'Announcements');
+        script.setAttribute('data-category-id', 'DIC_kwDOSN4YPs4C7zBF');
+        script.setAttribute('data-mapping', 'specific');
+        script.setAttribute('data-term', term);
+        script.setAttribute('data-strict', '0');
+        script.setAttribute('data-reactions-enabled', '1');
+        script.setAttribute('data-emit-metadata', '0');
+        script.setAttribute('data-input-position', 'top');
+        script.setAttribute('data-theme', 'light');
+        script.setAttribute('data-lang', 'zh-CN');
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
+        wrapper.appendChild(script);
     }
 
     // ===== Modal Helpers =====
@@ -1252,21 +817,6 @@
 
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
-    }
-
-    // ===== Toast =====
-    function showToast(msg, type = 'success') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
-        container.appendChild(toast);
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(100px)';
-            toast.style.transition = 'all 0.3s';
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
     }
 
     // ===== Close modals on overlay click =====
@@ -1279,10 +829,8 @@
     });
 
     // ===== Init =====
-    loadData();
     initMap();
     renderTripList();
-    updateRoleUI();
 
     // Fly to show all initial trips
     setTimeout(() => {
