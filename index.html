@@ -34,60 +34,50 @@
             color: var(--text);
             overflow: hidden;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ===== Top Navigation ===== */
         .topbar {
-            height: 56px;
-            background: var(--bg-white);
+            height: 56px; background: var(--bg-white);
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            position: relative;
-            z-index: 1000;
-            box-shadow: 0 1px 3px var(--shadow);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; position: relative; z-index: 1000;
+            box-shadow: 0 1px 3px var(--shadow); flex-shrink: 0;
         }
-
         .topbar-left { display: flex; align-items: center; gap: 12px; }
-
         .topbar-logo {
             width: 36px; height: 36px;
             background: linear-gradient(135deg, var(--cyan), var(--orange));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
             font-size: 16px; color: white; font-weight: 700;
             box-shadow: 0 2px 8px rgba(0,188,193,0.3);
         }
-
         .topbar-title { font-size: 18px; font-weight: 700; color: var(--text); }
-
         .topbar-right { display: flex; align-items: center; gap: 16px; }
-
         .legend { display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary); }
         .legend-item { display: flex; align-items: center; gap: 6px; }
         .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-
         .btn {
             padding: 8px 16px; border-radius: 8px; border: none;
             font-family: inherit; font-size: 13px; font-weight: 500;
             cursor: pointer; transition: all 0.2s;
             display: flex; align-items: center; gap: 6px;
         }
-
-        .btn-outline {
-            background: transparent; color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
+        .btn-outline { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
         .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+        .btn-outline.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
         /* ===== Main Layout ===== */
-        .main { display: flex; height: calc(100vh - 56px); }
+        .main { display: flex; flex: 1; min-height: 0; }
 
-        /* ===== Map ===== */
+        /* ===== Map Column (map + slider + stats, not under sidebar) ===== */
+        .map-column {
+            flex: 1; display: flex; flex-direction: column; min-width: 0;
+            position: relative; z-index: 1;
+        }
         #map { flex: 1; z-index: 1; }
-
         .leaflet-popup-content-wrapper {
             background: var(--bg-white) !important; color: var(--text) !important;
             border-radius: 12px !important; box-shadow: 0 4px 24px var(--shadow-md) !important;
@@ -95,24 +85,19 @@
         }
         .leaflet-popup-tip { background: var(--bg-white) !important; border: 1px solid var(--border) !important; border-top: none !important; border-left: none !important; }
         .leaflet-popup-content { margin: 12px 16px !important; line-height: 1.5 !important; }
-
         .popup-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
         .popup-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
         .popup-desc { font-size: 12px; color: #718096; margin-top: 4px; }
         .popup-persons { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
         .popup-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
         .popup-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-
         .popup-btn {
             font-size: 11px; padding: 4px 10px; border-radius: 6px;
             border: 1px solid var(--border); background: var(--bg-white);
             color: var(--text-secondary); cursor: pointer; font-family: inherit; transition: all 0.2s;
         }
         .popup-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-        .popup-link {
-            font-size: 11px; color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
-        }
+        .popup-link { font-size: 11px; color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         .popup-link:hover { text-decoration: underline; }
 
         /* ===== Sidebar ===== */
@@ -120,21 +105,21 @@
             width: 400px; background: var(--bg-white);
             border-left: 1px solid var(--border);
             display: flex; flex-direction: column; z-index: 500;
-            transition: transform 0.3s; box-shadow: -2px 0 8px var(--shadow);
+            transition: transform 0.3s, width 0.3s; box-shadow: -2px 0 8px var(--shadow);
+            flex-shrink: 0;
         }
-        .sidebar.collapsed { transform: translateX(100%); position: absolute; right: 0; top: 56px; bottom: 0; }
-
+        .sidebar.collapsed { width: 0; overflow: hidden; border-left: none; box-shadow: none; }
         .sidebar-header {
             padding: 16px 20px; border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
         }
-        .sidebar-header h3 { font-size: 16px; font-weight: 700; color: var(--text); }
-
+        .sidebar-header h3 { font-size: 16px; font-weight: 700; color: var(--text); white-space: nowrap; }
         .sidebar-view-toggle { display: flex; gap: 2px; background: var(--bg); border-radius: 8px; padding: 2px; }
         .sidebar-view-btn {
-            padding: 5px 12px; border-radius: 6px; border: none;
-            font-family: inherit; font-size: 12px; font-weight: 500;
+            padding: 5px 10px; border-radius: 6px; border: none;
+            font-family: inherit; font-size: 11px; font-weight: 500;
             color: var(--text-muted); background: transparent; cursor: pointer; transition: all 0.2s;
+            white-space: nowrap;
         }
         .sidebar-view-btn.active { background: var(--bg-white); color: var(--accent); box-shadow: 0 1px 3px var(--shadow); }
 
@@ -154,9 +139,7 @@
         /* ===== Trip List ===== */
         .trip-list { flex: 1; overflow-y: auto; padding: 12px; }
         .trip-list::-webkit-scrollbar { width: 4px; }
-        .trip-list::-webkit-scrollbar-track { background: transparent; }
         .trip-list::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
-
         .trip-card {
             background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px;
             padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
@@ -168,7 +151,6 @@
         .trip-card.type-both::before { background: var(--cyan); }
         .trip-card:hover { box-shadow: 0 4px 12px var(--shadow-md); transform: translateY(-1px); }
         .trip-card.active { border-color: var(--accent); box-shadow: 0 4px 12px rgba(49,130,206,0.15); }
-
         .trip-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
         .trip-route { font-size: 14px; font-weight: 600; color: var(--text); }
         .trip-type-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
@@ -213,9 +195,14 @@
         .calendar-day.has-trips { background: #FAFBFC; }
         .calendar-day.selected { background: var(--accent) !important; color: white !important; box-shadow: 0 2px 8px rgba(49,130,206,0.4); }
         .calendar-day.selected .trip-dots .trip-dot { box-shadow: 0 0 0 1.5px white; }
+        .calendar-day.out-of-range { color: #D0D5DD; opacity: 0.4; }
         .trip-dots { display: flex; gap: 2px; margin-top: 2px; position: absolute; bottom: 4px; }
         .trip-dot { width: 5px; height: 5px; border-radius: 50%; }
-
+        .calendar-lunar { font-size: 9px; color: var(--text-muted); line-height: 1; margin-top: 1px; position: absolute; top: 3px; }
+        .calendar-day.today .calendar-lunar { color: var(--accent); }
+        .calendar-day.selected .calendar-lunar { color: rgba(255,255,255,0.8); }
+        .calendar-day.other-month .calendar-lunar { color: #E2E8F0; }
+        .calendar-day.out-of-range .calendar-lunar { color: #D0D5DD; }
         .calendar-trip-detail { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
         .calendar-trip-detail-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
         .calendar-trip-item {
@@ -258,19 +245,105 @@
         }
         @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* ===== Stats ===== */
+        /* ===== Stats Bar ===== */
         .stats-bar {
             padding: 8px 20px; background: var(--bg); border-bottom: 1px solid var(--border);
             display: flex; gap: 16px; font-size: 11px; color: var(--text-muted);
         }
         .stat-item i { margin-right: 4px; }
 
+        /* ===== Time Slider Bar (inside map-column) ===== */
+        .time-slider-bar {
+            background: var(--bg-white); border-top: 1px solid var(--border);
+            padding: 10px 24px; display: flex; align-items: center; gap: 16px;
+            flex-shrink: 0; z-index: 500;
+        }
+        .time-slider-label {
+            font-size: 12px; font-weight: 600; color: var(--text-secondary);
+            white-space: nowrap; display: flex; align-items: center; gap: 6px;
+        }
+        .time-slider-label i { color: var(--accent); }
+        .time-slider-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .time-slider-range { display: flex; align-items: center; gap: 8px; }
+        .time-range-display {
+            font-size: 11px; color: var(--accent); font-weight: 600;
+            background: var(--accent-light); padding: 3px 10px; border-radius: 6px;
+            white-space: nowrap;
+        }
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+            border-radius: 3px; background: var(--border); outline: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+            border-radius: 50%; background: var(--accent); border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: grab; transition: transform 0.15s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.25); }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
+            border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: grab;
+        }
+        .time-slider-ticks {
+            display: flex; justify-content: space-between;
+            font-size: 10px; color: var(--text-muted); padding: 0 2px;
+        }
+
+        /* ===== Stats Panel (inside map-column, below slider) ===== */
+        .stats-panel {
+            background: var(--bg-white); border-top: 1px solid var(--border);
+            box-shadow: 0 -2px 12px var(--shadow); flex-shrink: 0;
+            display: flex; flex-direction: column;
+            max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stats-panel.open { max-height: 400px; }
+        .stats-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 24px; border-bottom: 1px solid var(--border);
+            background: var(--bg); flex-shrink: 0;
+        }
+        .stats-panel-header h3 {
+            font-size: 14px; font-weight: 700; color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .stats-panel-header h3 i { color: var(--accent); }
+        .stats-close-btn {
+            width: 28px; height: 28px; border-radius: 6px;
+            border: 1px solid var(--border); background: var(--bg-white);
+            color: var(--text-muted); cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .stats-close-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+        .stats-charts {
+            flex: 1; overflow-x: auto; overflow-y: hidden;
+            display: flex; gap: 20px; padding: 20px 24px;
+            min-height: 280px;
+        }
+        .stats-charts::-webkit-scrollbar { height: 6px; }
+        .stats-charts::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 3px; }
+        .chart-card {
+            min-width: 280px; max-width: 340px; flex: 1;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px;
+            display: flex; flex-direction: column;
+        }
+        .chart-card-title {
+            font-size: 13px; font-weight: 600; color: var(--text);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        }
+        .chart-card-title i { color: var(--accent); font-size: 12px; }
+        .chart-container { flex: 1; min-height: 220px; }
+
         /* ===== Responsive ===== */
         @media (max-width: 768px) {
-            .sidebar { width: 320px; position: absolute; right: 0; top: 56px; bottom: 0; }
+            .sidebar { width: 320px; position: absolute; right: 0; top: 56px; bottom: 0; z-index: 600; }
             .sidebar:not(.collapsed) { transform: translateX(0); }
+            .sidebar.collapsed { transform: translateX(100%); width: 320px; }
             .legend { display: none; }
             .modal { width: 95vw; }
+            .stats-charts { flex-direction: column; overflow-y: auto; }
+            .chart-card { min-width: 0; max-width: 100%; }
         }
     </style>
 </head>
@@ -287,12 +360,55 @@
                 <div class="legend-item"><div class="legend-dot" style="background: var(--red);"></div><span>郝熠然</span></div>
                 <div class="legend-item"><div class="legend-dot" style="background: var(--cyan);"></div><span>双人</span></div>
             </div>
+            <button class="btn btn-outline active" id="btnStats" onclick="toggleStats()"><i class="fas fa-chart-pie"></i> 统计</button>
             <button class="btn btn-outline" onclick="toggleSidebar()"><i class="fas fa-columns"></i> 侧边栏</button>
         </div>
     </div>
 
     <div class="main">
-        <div id="map"></div>
+        <!-- Map Column: map + time slider + stats panel -->
+        <div class="map-column">
+            <div id="map"></div>
+
+            <!-- Time Slider -->
+            <div class="time-slider-bar" id="timeSliderBar">
+                <div class="time-slider-label"><i class="fas fa-clock"></i> 时间范围</div>
+                <div class="time-slider-wrap">
+                    <div class="time-slider-range">
+                        <span class="time-range-display" id="timeRangeStart">2025-04</span>
+                        <input type="range" id="timeSliderStart" min="0" max="100" value="0" oninput="onTimeSliderChange()">
+                        <input type="range" id="timeSliderEnd" min="0" max="100" value="100" oninput="onTimeSliderChange()">
+                        <span class="time-range-display" id="timeRangeEnd">2026-05</span>
+                        <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="resetTimeSlider()"><i class="fas fa-undo"></i> 重置</button>
+                    </div>
+                    <div class="time-slider-ticks" id="timeSliderTicks"></div>
+                </div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="stats-panel open" id="statsPanel">
+                <div class="stats-panel-header">
+                    <h3><i class="fas fa-chart-bar"></i> 数据统计</h3>
+                    <button class="stats-close-btn" onclick="toggleStats()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="stats-charts">
+                    <div class="chart-card">
+                        <div class="chart-card-title"><i class="fas fa-chart-pie"></i> 行程比例</div>
+                        <div class="chart-container" id="chartSunburst"></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-title"><i class="fas fa-calendar-week"></i> 月度出行分布</div>
+                        <div class="chart-container" id="chartMonthly"></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-title"><i class="fas fa-city"></i> 最常去的城市</div>
+                        <div class="chart-container" id="chartCity"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h3><i class="fas fa-plane-departure" style="color:var(--accent);margin-right:8px;"></i>行程</h3>
@@ -301,7 +417,6 @@
                     <button class="sidebar-view-btn" id="btnCalendar" onclick="switchView('calendar')"><i class="fas fa-calendar-alt"></i> 日历</button>
                 </div>
             </div>
-
             <div id="listView">
                 <div class="filter-tabs" id="filterTabsList">
                     <button class="filter-tab active" onclick="filterTrips('all', this)">全部</button>
@@ -312,7 +427,6 @@
                 <div class="stats-bar" id="statsBar"></div>
                 <div class="trip-list" id="tripList"></div>
             </div>
-
             <div id="calendarView" style="display:none;">
                 <div class="filter-tabs" id="filterTabsCal">
                     <button class="filter-tab active" onclick="filterTrips('all', this)">全部</button>
@@ -334,11 +448,119 @@
             <div class="modal-body" id="detailBody"></div>
         </div>
     </div>
-
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script>
+    // ===== Lunar Calendar (lightweight, no external lib) =====
+    const LunarCal = (() => {
+        const lunarInfo = [
+            0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+            0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+            0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+            0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+            0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+            0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+            0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+            0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+            0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+            0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
+            0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+            0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+            0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+            0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+            0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+            0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,
+            0x092e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+            0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+            0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+            0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a4d0,0x0d150,0x0f252,
+            0x0d520
+        ];
+
+        const Gan = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+        const Zhi = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+        const Animals = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+        const monthNames = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+        const dayNames = ['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+            '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+            '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+
+        function lYearDays(y) {
+            let s = 348;
+            for (let i = 0x8000; i > 0x8; i >>= 1) s += (lunarInfo[y - 1900] & i) ? 1 : 0;
+            return s + leapDays(y);
+        }
+        function leapMonth(y) { return lunarInfo[y - 1900] & 0xf; }
+        function leapDays(y) { if (leapMonth(y)) return (lunarInfo[y - 1900] & 0x10000) ? 30 : 29; return 0; }
+        function monthDays(y, m) { return (lunarInfo[y - 1900] & (0x10000 >> m)) ? 30 : 29; }
+
+        function solar2lunar(yy, mm, dd) {
+            const baseDate = new Date(1900, 0, 31);
+            const objDate = new Date(yy, mm - 1, dd);
+            let offset = Math.floor((objDate - baseDate) / 86400000);
+            let lunarYear, lunarMonth, lunarDay, isLeap = false;
+
+            for (lunarYear = 1900; lunarYear < 2101 && offset > 0; lunarYear++) {
+                const daysInYear = lYearDays(lunarYear);
+                offset -= daysInYear;
+            }
+            if (offset < 0) { offset += lYearDays(--lunarYear); }
+
+            const leap = leapMonth(lunarYear);
+            for (lunarMonth = 1; lunarMonth < 13 && offset > 0; lunarMonth++) {
+                if (leap > 0 && lunarMonth === (leap + 1) && !isLeap) {
+                    --lunarMonth; isLeap = true;
+                    const daysInMonth = leapDays(lunarYear);
+                    offset -= daysInMonth;
+                } else {
+                    const daysInMonth = monthDays(lunarYear, lunarMonth);
+                    offset -= daysInMonth;
+                }
+                if (isLeap && lunarMonth === (leap + 1)) isLeap = false;
+            }
+            if (offset === 0 && leap > 0 && lunarMonth === leap + 1) {
+                if (isLeap) { isLeap = false; } else { isLeap = true; --lunarMonth; }
+            }
+            if (offset < 0) { offset += monthDays(lunarYear, --lunarMonth); }
+            lunarDay = offset + 1;
+
+            // Special days
+            let dayStr = dayNames[lunarDay - 1];
+            // Show month name for first day of month
+            if (lunarDay === 1) dayStr = (isLeap ? '闰' : '') + monthNames[lunarMonth - 1] + '月';
+            // Show festivals
+            if (lunarMonth === 1 && lunarDay === 1) dayStr = '春节';
+            else if (lunarMonth === 1 && lunarDay === 15) dayStr = '元宵';
+            else if (lunarMonth === 5 && lunarDay === 5) dayStr = '端午';
+            else if (lunarMonth === 7 && lunarDay === 7) dayStr = '七夕';
+            else if (lunarMonth === 7 && lunarDay === 15) dayStr = '中元';
+            else if (lunarMonth === 8 && lunarDay === 15) dayStr = '中秋';
+            else if (lunarMonth === 9 && lunarDay === 9) dayStr = '重阳';
+            else if (lunarMonth === 12 && lunarDay === 30) dayStr = '除夕';
+            // Solar festivals
+            if (mm === 1 && dd === 1) dayStr = '元旦';
+            else if (mm === 2 && dd === 14) dayStr = '情人节';
+            else if (mm === 3 && dd === 8) dayStr = '妇女节';
+            else if (mm === 4 && dd === 1) dayStr = '愚人节';
+            else if (mm === 5 && dd === 1) dayStr = '劳动节';
+            else if (mm === 5 && dd === 4) dayStr = '青年节';
+            else if (mm === 6 && dd === 1) dayStr = '儿童节';
+            else if (mm === 7 && dd === 1) dayStr = '建党节';
+            else if (mm === 8 && dd === 1) dayStr = '建军节';
+            else if (mm === 9 && dd === 10) dayStr = '教师节';
+            else if (mm === 10 && dd === 1) dayStr = '国庆节';
+            else if (mm === 10 && dd === 31) dayStr = '万圣节';
+            else if (mm === 12 && dd === 24) dayStr = '平安夜';
+            else if (mm === 12 && dd === 25) dayStr = '圣诞节';
+
+            return { lunarDay: dayStr };
+        }
+
+        return { solar2lunar };
+    })();
+
     // ===== State =====
     let currentFilter = 'all';
     let currentView = 'list';
@@ -347,11 +569,13 @@
     let selectedDate = null;
     let activeItemId = null;
     let map, mapLayers = [];
+    let statsOpen = true;
+    let timeStart = null, timeEnd = null;
+    let timeMonths = [];
+    let echartsInstances = [];
 
     // ===== DATA =====
-    // type: 'trip' (路线) | 'event' (事件地点)
     const allItems = [
-
         // ====== 双人行程 ======
         { id: 'b1', type: 'trip', date: '2025-09-15', from: '北京', to: '北京', fromCoord: [39.92, 116.41], toCoord: [39.92, 116.41], persons: ['yunqi','haoyiran'], desc: 'FUTURE MODA中国意大利时尚日 隆福寺举办，一起看秀', link: 'https://weibo.com/7997469042/Q4NIuxum1', transport: 'flight' },
         { id: 'b2', type: 'event', date: '2025-10-15', location: '北京', coord: [40.21, 116.23], persons: ['yunqi','haoyiran'], desc: '拍红秀和星光卡，觅舍酒店拍摄' },
@@ -430,7 +654,6 @@
         if (item.persons.includes('haoyiran')) return 'haoyiran';
         return 'both';
     }
-
     function getColor(type) {
         switch(type) { case 'yunqi': return '#F57C00'; case 'haoyiran': return '#E53935'; case 'both': return '#00ACC1'; }
     }
@@ -442,21 +665,87 @@
     }
 
     function getFiltered() {
-        if (currentFilter === 'all') return allItems;
-        return allItems.filter(i => getItemType(i) === currentFilter);
+        let list = currentFilter === 'all' ? allItems : allItems.filter(i => getItemType(i) === currentFilter);
+        if (timeStart) list = list.filter(i => i.date >= timeStart);
+        if (timeEnd) list = list.filter(i => i.date <= timeEnd + '-31');
+        return list;
     }
-
     function getItemsByDate() {
         const m = {};
         allItems.forEach(i => { if (!m[i.date]) m[i.date] = []; m[i.date].push(i); });
         return m;
     }
-
     function stripHtml(html) {
         if (!html) return '';
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
+    }
+
+    // ===== Time Slider =====
+    function initTimeSlider() {
+        const months = new Set();
+        allItems.forEach(i => months.add(i.date.substring(0, 7)));
+        const sorted = [...months].sort();
+        const first = sorted[0], last = sorted[sorted.length - 1];
+        const fy = parseInt(first.split('-')[0]), fm = parseInt(first.split('-')[1]);
+        const ly = parseInt(last.split('-')[0]), lm = parseInt(last.split('-')[1]);
+        let y = fy, m = fm;
+        timeMonths = [];
+        while (y < ly || (y === ly && m <= lm)) {
+            timeMonths.push(`${y}-${String(m).padStart(2, '0')}`);
+            m++;
+            if (m > 12) { m = 1; y++; }
+        }
+        const ey = y, em = m;
+        if (em > 12) { timeMonths.push(`${ey + 1}-01`); }
+        else { timeMonths.push(`${ey}-${String(em).padStart(2, '0')}`); }
+
+        const maxVal = timeMonths.length - 1;
+        const sliderStart = document.getElementById('timeSliderStart');
+        const sliderEnd = document.getElementById('timeSliderEnd');
+        sliderStart.max = maxVal;
+        sliderEnd.max = maxVal;
+        sliderStart.value = 0;
+        sliderEnd.value = maxVal;
+
+        const ticks = document.getElementById('timeSliderTicks');
+        let ticksHtml = '';
+        timeMonths.forEach((m, i) => {
+            if (i === 0 || i === maxVal || (i % 3 === 0 && timeMonths.length <= 15) || (i % 6 === 0)) {
+                ticksHtml += `<span>${m}</span>`;
+            } else {
+                ticksHtml += `<span></span>`;
+            }
+        });
+        ticks.innerHTML = ticksHtml;
+
+        updateTimeRangeDisplay();
+    }
+
+    function onTimeSliderChange() {
+        let s = parseInt(document.getElementById('timeSliderStart').value);
+        let e = parseInt(document.getElementById('timeSliderEnd').value);
+        if (s > e) { [s, e] = [e, s]; }
+        timeStart = timeMonths[s];
+        timeEnd = timeMonths[e];
+        updateTimeRangeDisplay();
+        refreshAll();
+        renderCharts();
+    }
+
+    function updateTimeRangeDisplay() {
+        document.getElementById('timeRangeStart').textContent = timeStart || timeMonths[0];
+        document.getElementById('timeRangeEnd').textContent = timeEnd || timeMonths[timeMonths.length - 1];
+    }
+
+    function resetTimeSlider() {
+        timeStart = null; timeEnd = null;
+        document.getElementById('timeSliderStart').value = 0;
+        document.getElementById('timeSliderEnd').value = timeMonths.length - 1;
+        updateTimeRangeDisplay();
+        refreshAll();
+        renderCharts();
     }
 
     // ===== Map =====
@@ -469,25 +758,19 @@
         }).addTo(map);
         renderMap();
     }
-
     function renderMap() {
         mapLayers.forEach(l => map.removeLayer(l));
         mapLayers = [];
         const filtered = getFiltered();
-
         filtered.forEach(item => {
             const color = getColor(getItemType(item));
-
             if (item.type === 'trip' && item.fromCoord && item.toCoord) {
-                // Check if it's a real route (from !== to)
                 if (item.fromCoord[0] !== item.toCoord[0] || item.fromCoord[1] !== item.toCoord[1]) {
                     const line = drawCurvedLine(item.fromCoord, item.toCoord, color);
                     if (line) mapLayers.push(line);
-
                     const m1 = L.marker(item.fromCoord, { icon: createRouteMarker(item.from.charAt(0), color, false) }).addTo(map);
                     m1.bindPopup(createTripPopup(item, 'from'));
                     mapLayers.push(m1);
-
                     const m2 = L.marker(item.toCoord, { icon: createRouteMarker(item.to.charAt(0), color, true) }).addTo(map);
                     m2.bindPopup(createTripPopup(item, 'to'));
                     mapLayers.push(m2);
@@ -499,7 +782,6 @@
             }
         });
     }
-
     function drawCurvedLine(from, to, color) {
         const points = [], steps = 50;
         for (let i = 0; i <= steps; i++) {
@@ -507,12 +789,10 @@
             const lat = from[0] + (to[0] - from[0]) * t;
             const lng = from[1] + (to[1] - from[1]) * t;
             const dist = Math.sqrt(Math.pow(to[0] - from[0], 2) + Math.pow(to[1] - from[1], 2));
-            const latOffset = Math.sin(t * Math.PI) * dist * 0.15;
-            points.push([lat + latOffset, lng]);
+            points.push([lat + Math.sin(t * Math.PI) * dist * 0.15, lng]);
         }
         return L.polyline(points, { color, weight: 2.5, opacity: 0.8, dashArray: '8, 6' }).addTo(map);
     }
-
     function createRouteMarker(letter, color, isDest) {
         const s = isDest ? 28 : 22, fs = isDest ? 13 : 10;
         return L.divIcon({
@@ -521,7 +801,6 @@
             iconSize: [s, s], iconAnchor: [s/2, s/2], popupAnchor: [0, -s/2]
         });
     }
-
     function createEventPin(color) {
         return L.divIcon({
             className: 'custom-marker',
@@ -529,7 +808,6 @@
             iconSize: [16, 16], iconAnchor: [8, 8], popupAnchor: [0, -8]
         });
     }
-
     function createTripPopup(item, side) {
         const color = getColor(getItemType(item));
         const badges = makeBadges(item.persons);
@@ -543,7 +821,6 @@
                 <button class="popup-btn" onclick="jumpToCalendar('${item.date}')"><i class="fas fa-calendar-alt"></i> 日历</button>
             </div>`;
     }
-
     function createEventPopup(item) {
         const color = getColor(getItemType(item));
         const badges = makeBadges(item.persons);
@@ -557,11 +834,9 @@
                 <button class="popup-btn" onclick="jumpToCalendar('${item.date}')"><i class="fas fa-calendar-alt"></i> 日历</button>
             </div>`;
     }
-
     function makeBadges(persons) {
-        if (persons.includes('yunqi') && persons.includes('haoyiran')) {
+        if (persons.includes('yunqi') && persons.includes('haoyiran'))
             return '<span class="popup-badge" style="background:#E0F7FA;color:#00ACC1;">🤝 双人</span>';
-        }
         return persons.map(p => {
             const c = p === 'yunqi' ? '#F57C00' : '#E53935';
             const n = p === 'yunqi' ? '云旗' : '郝熠然';
@@ -584,83 +859,59 @@
         const container = document.getElementById('tripList');
         const stats = document.getElementById('statsBar');
         const filtered = getFiltered();
-
         const tripsCount = filtered.filter(i => i.type === 'trip').length;
         const eventsCount = filtered.filter(i => i.type === 'event').length;
         stats.innerHTML = `<span class="stat-item"><i class="fas fa-route"></i>${tripsCount} 条路线</span><span class="stat-item"><i class="fas fa-map-pin"></i>${eventsCount} 个事件</span>`;
-
         if (filtered.length === 0) {
             container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;"><i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:12px;"></i>暂无数据</div>';
             return;
         }
-
-        // Sort by date descending
         const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date));
-
         container.innerHTML = sorted.map(item => {
             const type = getItemType(item);
             const color = getColor(type);
             const typeName = getTypeName(type);
             const icon = item.type === 'trip' ? getTransportIcon(item.transport) : '📍';
-
-            let title = '';
-            if (item.type === 'trip') {
-                title = `${icon} ${item.from} → ${item.to}`;
-            } else {
-                title = `${icon} ${stripHtml(item.title || item.location || '事件')}`;
-            }
-
+            let title = item.type === 'trip' ? `${icon} ${item.from} → ${item.to}` : `${icon} ${stripHtml(item.title || item.location || '事件')}`;
             return `<div class="trip-card type-${type} ${activeItemId === item.id ? 'active' : ''}" onclick="flyToItem('${item.id}')">
-                <div class="trip-card-top">
-                    <div class="trip-route">${title}</div>
-                    <span class="trip-type-badge" style="background:${color}15;color:${color};">${typeName}</span>
-                </div>
+                <div class="trip-card-top"><div class="trip-route">${title}</div>
+                <span class="trip-type-badge" style="background:${color}15;color:${color};">${typeName}</span></div>
                 <div class="trip-meta"><span><i class="fas fa-calendar-alt"></i>${item.date}</span>
-                    ${item.type === 'trip' ? '<span><i class="fas fa-plane"></i>路线</span>' : '<span><i class="fas fa-map-pin"></i>事件</span>'}
-                </div>
+                    ${item.type === 'trip' ? '<span><i class="fas fa-plane"></i>路线</span>' : '<span><i class="fas fa-map-pin"></i>事件</span>'}</div>
                 <div class="trip-desc">${stripHtml(item.desc) || '暂无备注'}</div>
                 <div class="trip-card-actions">
                     ${item.link ? `<button class="trip-card-btn" onclick="event.stopPropagation();window.open('${item.link}','_blank')"><i class="fas fa-link"></i> 链接</button>` : ''}
                     <button class="trip-card-btn" onclick="event.stopPropagation();showDetail('${item.id}')"><i class="fas fa-eye"></i> 详情</button>
                     <button class="trip-card-btn" onclick="event.stopPropagation();jumpToCalendar('${item.date}')"><i class="fas fa-calendar-alt"></i> 日历</button>
-                </div>
-            </div>`;
+                </div></div>`;
         }).join('');
     }
-
     function filterTrips(type, btn) {
         currentFilter = type;
         document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
         if (btn) btn.classList.add('active');
-        renderList();
-        renderMap();
+        refreshAll();
+    }
+    function refreshAll() {
+        renderList(); renderMap(); renderCharts();
         if (currentView === 'calendar') renderCalendar();
     }
-
     function flyToItem(id) {
         const item = allItems.find(i => i.id === id);
         if (!item) return;
         activeItemId = id;
         let coords;
-        if (item.type === 'trip' && item.fromCoord && item.toCoord) {
-            coords = [item.fromCoord, item.toCoord];
-        } else if (item.coord) {
-            coords = [item.coord];
-        }
+        if (item.type === 'trip' && item.fromCoord && item.toCoord) coords = [item.fromCoord, item.toCoord];
+        else if (item.coord) coords = [item.coord];
         if (coords && coords.length > 0) {
-            if (coords.length === 1) {
-                map.flyTo(coords[0], 10, { duration: 1 });
-            } else {
-                map.flyToBounds(L.latLngBounds(coords).pad(0.3), { duration: 1.2 });
-            }
+            if (coords.length === 1) map.flyTo(coords[0], 10, { duration: 1 });
+            else map.flyToBounds(L.latLngBounds(coords).pad(0.3), { duration: 1.2 });
         }
         renderList();
         selectedDate = item.date;
         if (currentView === 'calendar') renderCalendar();
     }
-
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
-
     function jumpToCalendar(dateStr) {
         const d = new Date(dateStr);
         calendarYear = d.getFullYear();
@@ -674,15 +925,12 @@
     function renderCalendar() {
         const container = document.getElementById('calendarContainer');
         const filtered = getFiltered();
-
         const filteredDates = {};
         filtered.forEach(i => { if (!filteredDates[i.date]) filteredDates[i.date] = []; filteredDates[i.date].push(i); });
-
         const today = new Date();
         const year = calendarYear, month = calendarMonth;
         const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
         const weekdays = ['一','二','三','四','五','六','日'];
-
         const firstDay = new Date(year, month, 1);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         let startWeekday = firstDay.getDay() - 1;
@@ -699,38 +947,48 @@
         </div><div class="calendar-grid">`;
 
         weekdays.forEach(d => { html += `<div class="calendar-weekday">${d}</div>`; });
-        for (let i = startWeekday - 1; i >= 0; i--) html += `<div class="calendar-day other-month">${prevMonthLastDay - i}</div>`;
-
+        // Previous month padding
+        const prevMonth = month === 0 ? 11 : month - 1;
+        const prevYear = month === 0 ? year - 1 : year;
+        for (let i = startWeekday - 1; i >= 0; i--) {
+            const pd = prevMonthLastDay - i;
+            const lunar = LunarCal.solar2lunar(prevYear, prevMonth + 1, pd);
+            html += `<div class="calendar-day other-month">${pd}<span class="calendar-lunar">${lunar.lunarDay}</span></div>`;
+        }
+        // Current month
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
             const isSelected = (selectedDate === dateStr);
             const dayItems = filteredDates[dateStr] || [];
-
             let cls = 'calendar-day';
             if (isToday) cls += ' today';
             if (isSelected) cls += ' selected';
             if (dayItems.length > 0) cls += ' has-trips';
-
+            if ((timeStart && dateStr < timeStart) || (timeEnd && dateStr > timeEnd + '-31')) cls += ' out-of-range';
             let dots = '';
             if (dayItems.length > 0) {
                 dots = '<div class="trip-dots">';
                 dayItems.slice(0, 4).forEach(i => { dots += `<div class="trip-dot" style="background:${getColor(getItemType(i))};"></div>`; });
                 dots += '</div>';
             }
-            html += `<div class="${cls}" onclick="selectDate('${dateStr}')">${d}${dots}</div>`;
+            // Lunar calendar
+            const lunar = LunarCal.solar2lunar(year, month + 1, d);
+            html += `<div class="${cls}" onclick="selectDate('${dateStr}')"><span class="calendar-lunar">${lunar.lunarDay}</span>${d}${dots}</div>`;
         }
-
+        // Next month padding
+        const nextMonth = month === 11 ? 0 : month + 1;
+        const nextYear = month === 11 ? year + 1 : year;
         const totalCells = startWeekday + daysInMonth;
         const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-        for (let i = 1; i <= remaining; i++) html += `<div class="calendar-day other-month">${i}</div>`;
+        for (let i = 1; i <= remaining; i++) {
+            const lunar = LunarCal.solar2lunar(nextYear, nextMonth + 1, i);
+            html += `<div class="calendar-day other-month">${i}<span class="calendar-lunar">${lunar.lunarDay}</span></div>`;
+        }
         html += '</div>';
 
         if (selectedDate) {
-            const dateItems = (filteredDates[selectedDate] || []).sort((a, b) => {
-                if (a.type !== b.type) return a.type === 'trip' ? -1 : 1;
-                return 0;
-            });
+            const dateItems = (filteredDates[selectedDate] || []).sort((a, b) => a.type === 'trip' ? -1 : 1);
             if (dateItems.length > 0) {
                 html += `<div class="calendar-trip-detail"><div class="calendar-trip-detail-title"><i class="fas fa-plane" style="color:var(--accent);margin-right:4px;"></i>${selectedDate}（${dateItems.length}条）</div>`;
                 dateItems.forEach(item => {
@@ -749,50 +1007,34 @@
         }
         container.innerHTML = html;
     }
-
     function selectDate(dateStr) {
-        selectedDate = dateStr;
-        renderCalendar();
+        selectedDate = dateStr; renderCalendar();
         const dayItems = getFiltered().filter(i => i.date === dateStr);
         if (dayItems.length > 0) {
             const coords = dayItems.map(i => i.type === 'trip' && i.fromCoord ? i.fromCoord : i.coord).filter(Boolean);
             if (coords.length) map.flyToBounds(L.latLngBounds(coords).pad(0.3), { duration: 1 });
         }
     }
-
     function changeMonth(delta) {
         calendarMonth += delta;
         if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
         if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
-        selectedDate = null;
-        renderCalendar();
+        selectedDate = null; renderCalendar();
     }
-
     function goToday() {
         const today = new Date();
-        calendarYear = today.getFullYear();
-        calendarMonth = today.getMonth();
+        calendarYear = today.getFullYear(); calendarMonth = today.getMonth();
         selectedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         renderCalendar();
     }
 
     // ===== Detail Modal =====
     function showDetail(id) {
-        const item = allItems.find(i => i.id === id);
-        if (!item) return;
-
-        const color = getColor(getItemType(item));
-        const badges = makeBadges(item.persons);
+        const item = allItems.find(i => i.id === id); if (!item) return;
+        const color = getColor(getItemType(item)); const badges = makeBadges(item.persons);
         let linkHtml = '';
         if (item.link) linkHtml = `<a href="${item.link}" target="_blank" rel="noopener" style="font-size:13px;color:var(--accent);"><i class="fas fa-external-link-alt"></i> 相关链接</a>`;
-
-        let titleText = '';
-        if (item.type === 'trip') {
-            titleText = `${getTransportIcon(item.transport)} ${item.from} → ${item.to}`;
-        } else {
-            titleText = `📍 ${stripHtml(item.title || item.location || '事件详情')}`;
-        }
-
+        let titleText = item.type === 'trip' ? `${getTransportIcon(item.transport)} ${item.from} → ${item.to}` : `📍 ${stripHtml(item.title || item.location || '事件详情')}`;
         document.getElementById('detailTitle').innerHTML = titleText;
         document.getElementById('detailBody').innerHTML = `
             <div style="margin-bottom:16px;">${badges}
@@ -804,21 +1046,16 @@
             <div style="padding-top:16px;border-top:1px solid var(--border);">
                 <h4 style="font-size:14px;margin-bottom:12px;color:var(--text);"><i class="fas fa-comments" style="color:var(--accent);margin-right:6px;"></i>留言板</h4>
                 <div class="giscus-wrapper"></div>
-            </div>
-        `;
-
+            </div>`;
         openModal('tripDetailModal');
         setTimeout(() => renderGiscus(`item-${item.id}`), 100);
     }
 
     // ===== Giscus =====
     function renderGiscus(term) {
-        const old = document.querySelector('.giscus-wrapper iframe');
-        if (old) old.remove();
-        const oldS = document.querySelector('.giscus-wrapper script');
-        if (oldS) oldS.remove();
-        const wrapper = document.querySelector('.giscus-wrapper');
-        if (!wrapper) return;
+        const old = document.querySelector('.giscus-wrapper iframe'); if (old) old.remove();
+        const oldS = document.querySelector('.giscus-wrapper script'); if (oldS) oldS.remove();
+        const wrapper = document.querySelector('.giscus-wrapper'); if (!wrapper) return;
         const script = document.createElement('script');
         script.src = 'https://giscus.app/client.js';
         script.setAttribute('data-repo', 'penapinner/yunyi-map');
@@ -843,13 +1080,140 @@
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); }); });
 
+    // ===== Stats Panel =====
+    function toggleStats() {
+        statsOpen = !statsOpen;
+        document.getElementById('statsPanel').classList.toggle('open', statsOpen);
+        document.getElementById('btnStats').classList.toggle('active', statsOpen);
+        if (statsOpen) setTimeout(() => { renderCharts(); resizeCharts(); }, 100);
+    }
+    function resizeCharts() {
+        echartsInstances.forEach(c => c.resize());
+    }
+
+    // ===== ECharts =====
+    function renderCharts() {
+        if (!statsOpen) return;
+        const filtered = getFiltered();
+
+        // --- Sunburst ---
+        const sunburstEl = document.getElementById('chartSunburst');
+        if (!echartsInstances[0]) echartsInstances[0] = echarts.init(sunburstEl);
+        const yqCount = filtered.filter(i => i.persons.includes('yunqi') && !i.persons.includes('haoyiran')).length;
+        const hyrCount = filtered.filter(i => i.persons.includes('haoyiran') && !i.persons.includes('yunqi')).length;
+        const bothCount = filtered.filter(i => i.persons.includes('yunqi') && i.persons.includes('haoyiran')).length;
+
+        echartsInstances[0].setOption({
+            tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+            series: [{
+                type: 'sunburst',
+                radius: ['15%', '90%'],
+                label: { rotate: 'radial', fontSize: 11, fontFamily: 'Noto Sans SC' },
+                data: [
+                    { name: '云旗', value: yqCount, itemStyle: { color: '#F57C00' },
+                      children: [
+                        { name: '路线', value: filtered.filter(i => i.persons.includes('yunqi') && !i.persons.includes('haoyiran') && i.type === 'trip').length, itemStyle: { color: '#FF9800' } },
+                        { name: '事件', value: filtered.filter(i => i.persons.includes('yunqi') && !i.persons.includes('haoyiran') && i.type === 'event').length, itemStyle: { color: '#FFE0B2' } }
+                      ]
+                    },
+                    { name: '郝熠然', value: hyrCount, itemStyle: { color: '#E53935' },
+                      children: [
+                        { name: '路线', value: filtered.filter(i => i.persons.includes('haoyiran') && !i.persons.includes('yunqi') && i.type === 'trip').length, itemStyle: { color: '#EF5350' } },
+                        { name: '事件', value: filtered.filter(i => i.persons.includes('haoyiran') && !i.persons.includes('yunqi') && i.type === 'event').length, itemStyle: { color: '#FFCDD2' } }
+                      ]
+                    },
+                    { name: '双人', value: bothCount, itemStyle: { color: '#00ACC1' },
+                      children: [
+                        { name: '路线', value: filtered.filter(i => i.persons.includes('yunqi') && i.persons.includes('haoyiran') && i.type === 'trip').length, itemStyle: { color: '#26C6DA' } },
+                        { name: '事件', value: filtered.filter(i => i.persons.includes('yunqi') && i.persons.includes('haoyiran') && i.type === 'event').length, itemStyle: { color: '#B2EBF2' } }
+                      ]
+                    }
+                ]
+            }]
+        }, true);
+
+        // --- Monthly Distribution ---
+        const monthlyEl = document.getElementById('chartMonthly');
+        if (!echartsInstances[1]) echartsInstances[1] = echarts.init(monthlyEl);
+
+        const monthData = {};
+        filtered.forEach(i => {
+            const ym = i.date.substring(0, 7);
+            if (!monthData[ym]) monthData[ym] = { yunqi: 0, haoyiran: 0, both: 0 };
+            const type = getItemType(i);
+            monthData[ym][type]++;
+        });
+        const monthKeys = Object.keys(monthData).sort();
+        const monthLabels = monthKeys.map(k => { const [y, m] = k.split('-'); return `${m}月`; });
+
+        echartsInstances[1].setOption({
+            tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+            legend: { data: ['云旗', '郝熠然', '双人'], bottom: 0, textStyle: { fontSize: 11, fontFamily: 'Noto Sans SC' } },
+            grid: { top: 10, right: 10, bottom: 30, left: 40 },
+            xAxis: { type: 'category', data: monthLabels, axisLabel: { fontSize: 10, fontFamily: 'Noto Sans SC' }, axisTick: { show: false } },
+            yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } } },
+            series: [
+                { name: '云旗', type: 'bar', stack: 'total', data: monthKeys.map(k => monthData[k].yunqi), color: '#F57C00', barMaxWidth: 28, itemStyle: { borderRadius: [0, 0, 0, 0] } },
+                { name: '郝熠然', type: 'bar', stack: 'total', data: monthKeys.map(k => monthData[k].haoyiran), color: '#E53935', barMaxWidth: 28 },
+                { name: '双人', type: 'bar', stack: 'total', data: monthKeys.map(k => monthData[k].both), color: '#00ACC1', barMaxWidth: 28, itemStyle: { borderRadius: [3, 3, 0, 0] } }
+            ]
+        }, true);
+
+        // --- City Ranking ---
+        const cityEl = document.getElementById('chartCity');
+        if (!echartsInstances[2]) echartsInstances[2] = echarts.init(cityEl);
+
+        const cityCount = {};
+        filtered.forEach(i => {
+            const cities = [];
+            if (i.type === 'trip') {
+                if (i.from) cities.push(i.from);
+                if (i.to) cities.push(i.to);
+            } else {
+                if (i.location) cities.push(i.location);
+            }
+            cities.forEach(c => {
+                const nc = c.replace(/(市|区|县|环球影城|海滩)$/g, '').trim();
+                cityCount[nc] = (cityCount[nc] || 0) + 1;
+            });
+        });
+        const citySorted = Object.entries(cityCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        const cityNames = citySorted.map(c => c[0]).reverse();
+        const cityValues = citySorted.map(c => c[1]).reverse();
+
+        const maxCity = Math.max(...cityValues, 1);
+        const cityColors = cityValues.map(v => {
+            const ratio = v / maxCity;
+            if (ratio > 0.7) return '#00ACC1';
+            if (ratio > 0.4) return '#3182CE';
+            return '#90CDF4';
+        });
+
+        echartsInstances[2].setOption({
+            tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: '{b}: {c} 次' },
+            grid: { top: 5, right: 40, bottom: 5, left: 55 },
+            xAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } } },
+            yAxis: { type: 'category', data: cityNames, axisLabel: { fontSize: 11, fontFamily: 'Noto Sans SC' }, axisTick: { show: false } },
+            series: [{
+                type: 'bar', data: cityValues.map((v, i) => ({ value: v, itemStyle: { color: cityColors[i], borderRadius: [0, 4, 4, 0] } })),
+                barMaxWidth: 20,
+                label: { show: true, position: 'right', fontSize: 11, fontWeight: 600, color: '#4A5568', formatter: '{c}次' }
+            }]
+        }, true);
+    }
+
     // ===== Init =====
     initMap();
     renderList();
-
-    // Set calendar to earliest data month
+    initTimeSlider();
     calendarYear = 2025;
-    calendarMonth = 8; // September
+    calendarMonth = 8;
+
+    // Stats panel is open by default, render charts after a short delay
+    setTimeout(() => {
+        renderCharts();
+        resizeCharts();
+    }, 300);
 
     setTimeout(() => {
         const coords = allItems.filter(i => i.coord).map(i => i.coord);
@@ -857,6 +1221,10 @@
         coords.push(...allItems.filter(i => i.toCoord).map(i => i.toCoord));
         if (coords.length) map.flyToBounds(L.latLngBounds(coords).pad(0.1), { duration: 1.5 });
     }, 500);
+
+    window.addEventListener('resize', () => { echartsInstances.forEach(c => c && c.resize()); });
+    const sidebarObs = new MutationObserver(() => { setTimeout(resizeCharts, 400); });
+    sidebarObs.observe(document.getElementById('sidebar'), { attributes: true, attributeFilter: ['class'] });
     </script>
 </body>
 </html>
