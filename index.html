@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>云旗 & 郝熠然 — 行程地图</title>
+    <title>云旗 & 郝熠然 — 值得一路同行</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
@@ -143,8 +143,8 @@
         .trip-list::-webkit-scrollbar { width: 4px; }
         .trip-list::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
         .trip-card {
-            background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px;
-            padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+            background: var(--bg-white); border: 1px solid var(--border); border-radius: 10px;
+            padding: 10px 12px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s;
             position: relative; overflow: hidden;
         }
         .trip-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
@@ -153,13 +153,13 @@
         .trip-card.type-both::before { background: var(--cyan); }
         .trip-card:hover { box-shadow: 0 4px 12px var(--shadow-md); transform: translateY(-1px); }
         .trip-card.active { border-color: var(--accent); box-shadow: 0 4px 12px rgba(49,130,206,0.15); }
-        .trip-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-        .trip-route { font-size: 14px; font-weight: 600; color: var(--text); }
-        .trip-type-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-        .trip-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-        .trip-meta i { margin-right: 4px; }
-        .trip-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .trip-card-actions { display: flex; gap: 4px; margin-top: 8px; justify-content: flex-end; }
+        .trip-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+        .trip-route { font-size: 13px; font-weight: 600; color: var(--text); }
+        .trip-type-badge { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+        .trip-meta { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .trip-meta i { margin-right: 3px; }
+        .trip-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .trip-card-actions { display: flex; gap: 4px; margin-top: 4px; justify-content: flex-end; }
         .trip-card-btn {
             font-size: 11px; padding: 3px 8px; border-radius: 5px;
             border: 1px solid var(--border); background: var(--bg-white);
@@ -354,7 +354,7 @@
     <div class="topbar">
         <div class="topbar-left">
             <div class="topbar-logo"><i class="fas fa-route"></i></div>
-            <span class="topbar-title">云旗 & 郝熠然 · 行程地图</span>
+            <span class="topbar-title">云旗 & 郝熠然 · 值得一路同行</span>
         </div>
         <div class="topbar-right">
             <div class="legend">
@@ -761,20 +761,7 @@
         const arcgis = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; <a href="https://www.arcgis.com/">Esri</a>',
             maxZoom: 20
-        });
-        // CARTO Light 底图
-        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-            subdomains: 'abcd', maxZoom: 20
-        });
-
-        // 添加底图切换控件
-        L.control.layers({
-            'ArcGIS 街道': arcgis,
-            'CARTO 简约': cartoLight
-        }, null, { position: 'topright', collapsed: false }).addTo(map);
-
-        arcgis.addTo(map);
+        }).addTo(map);
         renderMap();
     }
     function renderMap() {
