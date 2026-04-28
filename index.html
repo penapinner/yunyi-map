@@ -454,7 +454,13 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/cloudbase/1.1.0/cloud.js"></script>
     <script>
+    // ===== Cloud DB Config =====
+    const CLOUD_CONFIG = {
+        resourceAppid: 'wx9beae9e610696c94',
+        resourceEnv: 'cloudbase-d3g39fsu9edc25225'
+    };
     // ===== Lunar Calendar (lightweight, no external lib) =====
     const LunarCal = (() => {
         const lunarInfo = [
@@ -577,6 +583,7 @@
     let echartsInstances = [];
 
     // ===== DATA =====
+    // Fallback data (used when cloud DB is unavailable)
     const allItems = [
         // ====== 双人行程 ======
         { id: 'b1', type: 'trip', date: '2025-09-15', from: '北京', to: '北京', fromCoord: [39.92, 116.41], toCoord: [39.92, 116.41], persons: ['yunqi','haoyiran'], desc: 'FUTURE MODA中国意大利时尚日 隆福寺举办，一起看秀', link: 'https://weibo.com/7997469042/Q4NIuxum1', transport: 'flight' },
@@ -1215,18 +1222,69 @@
     calendarYear = 2025;
     calendarMonth = 8;
 
-    // Stats panel is open by default, render charts after a short delay
-    setTimeout(() => {
-        renderCharts();
-        resizeCharts();
-    }, 300);
+    // 从云数据库加载最新数据
+    function loadFromCloud() {
+        if (typeof cloud === 'undefined') {
+            console.warn('Cloud SDK not loaded, using fallback data');
+            return Promise.resolve(false);
+        }
+        const c1 = new cloud.Cloud({
+            identityless: true,
+            ...CLOUD_CONFIG
+        });
+        return c1.init().then(() => {
+            const db = c1.database();
+            // 分批加载（云数据库单次最多20条）
+            const MAX = 20;
+            let allData = [];
+            const batch = (skip) => {
+                return db.collection('trips')
+                    .orderBy('date', 'asc')
+                    .skip(skip)
+                    .limit(MAX)
+                    .get()
+                    .then(res => {
+                        allData = allData.concat(res.data);
+                        if (res.data.length === MAX) return batch(skip + MAX);
+                        return allData;
+                    });
+            };
+            return batch(0).then(data => {
+                if (data.length > 0) {
+                    // 用云端数据替换 allItems
+                    allItems.length = 0;
+                    allItems.push(...data);
+                    // 重新渲染所有内容
+                    renderList();
+                    renderMap();
+                    initTimeSlider();
+                    refreshAll();
+                    setTimeout(() => { renderCharts(); resizeCharts(); }, 100);
+                    console.log('已从云数据库加载', data.length, '条行程');
+                    return true;
+                }
+                return false;
+            });
+        }).catch(err => {
+            console.warn('云数据库加载失败，使用本地数据:', err.message || err);
+            return false;
+        });
+    }
 
-    setTimeout(() => {
-        const coords = allItems.filter(i => i.coord).map(i => i.coord);
-        coords.push(...allItems.filter(i => i.fromCoord).map(i => i.fromCoord));
-        coords.push(...allItems.filter(i => i.toCoord).map(i => i.toCoord));
-        if (coords.length) map.flyToBounds(L.latLngBounds(coords).pad(0.1), { duration: 1.5 });
-    }, 500);
+    loadFromCloud().then(() => {
+        // Stats panel is open by default, render charts after a short delay
+        setTimeout(() => {
+            renderCharts();
+            resizeCharts();
+        }, 300);
+
+        setTimeout(() => {
+            const coords = allItems.filter(i => i.coord).map(i => i.coord);
+            coords.push(...allItems.filter(i => i.fromCoord).map(i => i.fromCoord));
+            coords.push(...allItems.filter(i => i.toCoord).map(i => i.toCoord));
+            if (coords.length) map.flyToBounds(L.latLngBounds(coords).pad(0.1), { duration: 1.5 });
+        }, 500);
+    });
 
     window.addEventListener('resize', () => { echartsInstances.forEach(c => c && c.resize()); });
     const sidebarObs = new MutationObserver(() => { setTimeout(resizeCharts, 400); });
