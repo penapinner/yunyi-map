@@ -350,13 +350,10 @@
         }
         .category-tabs {
             display: flex;
+            flex-wrap: wrap;
             gap: 6px;
             padding: 10px 16px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
         }
-        .category-tabs::-webkit-scrollbar { display: none; }
         .category-tab {
             display: flex;
             align-items: center;
@@ -465,6 +462,17 @@
             flex-shrink: 0;
         }
         .checkin-card-nav:active { opacity: 0.7; }
+        .checkin-card-show {
+            display: inline-flex; align-items: center; gap: 3px;
+            padding: 2px 8px; border-radius: 12px;
+            background: var(--accent-light); color: var(--accent);
+            font-size: 11px; cursor: pointer; border: none; font-weight: 500;
+            flex-shrink: 0; opacity: 0.6;
+        }
+        .checkin-card-show.active {
+            opacity: 1; background: var(--accent); color: white;
+        }
+        .checkin-card-show:active { opacity: 0.7; }
 
         .nav-btn {
             display: flex;
@@ -593,10 +601,6 @@
                     <button class="category-tab" onclick="filterCheckin('biz', this)"><span class="cat-dot cat-biz"></span>活动商务</button>
                     <button class="category-tab" onclick="filterCheckin('support', this)"><span class="cat-dot cat-support"></span>应援打卡</button>
                     <button class="category-tab" onclick="filterCheckin('shop', this)"><span class="cat-dot cat-shop"></span>主题商店</button>
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-left:auto;cursor:pointer;white-space:nowrap;">
-                        <input type="checkbox" id="showCheckinMap" onchange="toggleCheckinMap(this.checked)">
-                        显示在地图上
-                    </label>
                 </div>
                 <div class="checkin-stats" id="checkinStats"></div>
                 <div class="checkin-list" id="checkinList"></div>
@@ -765,6 +769,7 @@
     let currentCategory = 'all';
     let pendingNavCoord = null;
     let pendingNavName = '';
+    let checkinMarkersMap = {}; // 单个打卡点的"显示"标记
 
     // ===== DATA =====
     // 数据从云数据库加载，不在此硬编码
@@ -985,7 +990,6 @@
         document.getElementById('calendarView').style.display = view === 'calendar' ? 'flex' : 'none';
         document.getElementById('checkinView').style.display = view === 'checkin' ? 'flex' : 'none';
         if (view === 'calendar') renderCalendar();
-        if (view === 'checkin' && document.getElementById('showCheckinMap').checked) renderCheckinMap();
     }
 
     // ===== List Rendering =====
@@ -1528,7 +1532,6 @@
         document.querySelectorAll('#categoryTabs .category-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         renderCheckinList();
-        if (document.getElementById('showCheckinMap').checked) renderCheckinMap();
     }
 
     function getFilteredCheckins() {
@@ -1555,11 +1558,17 @@
             // 导航目标：优先 城市+地址+名称，其次 城市+名称
             const navTarget = item.address
                 ? `${item.city}${item.address}${item.name}` : `${item.city}${item.name}`;
+            // 唯一标识，用于"显示"功能
+            const markerKey = (item.city + '_' + item.name).replace(/[^a-zA-Z0-9\u4e00-\u9fff_]/g, '');
+            if (!checkinMarkersMap[markerKey]) {
+                checkinMarkersMap[markerKey] = { coord: item.coord, name: item.name, category: item.category, city: item.city, address: item.address, marker: null };
+            }
+            const isShown = checkinMarkersMap[markerKey] && checkinMarkersMap[markerKey].marker;
             return `<div class="checkin-card" onclick="flyToCheckin(${item.coord[0]},${item.coord[1]})">
                 <div class="checkin-card-header">
                     <span class="checkin-card-tag tag-${item.category}">${cat.name}</span>
                 </div>
-                <div class="checkin-card-name"><span>${item.name}</span><button class="checkin-card-nav" data-lat="${item.coord[0]}" data-lng="${item.coord[1]}" data-name="${navTarget.replace(/"/g, '&quot;')}" onclick="event.stopPropagation();showNavModal(this.dataset.lat,this.dataset.lng,this.dataset.name)"><i class="fas fa-directions"></i> 导航</button></div>
+                <div class="checkin-card-name"><span>${item.name}</span><span style="display:flex;gap:4px;flex-shrink:0;"><button class="checkin-card-show ${isShown?'active':''}" data-key="${markerKey}" onclick="event.stopPropagation();toggleSingleCheckinMarker(this.dataset.key)"><i class="fas ${isShown?'fa-eye':'fa-eye-slash'}"></i> ${isShown?'隐藏':'显示'}</button><button class="checkin-card-nav" data-lat="${item.coord[0]}" data-lng="${item.coord[1]}" data-name="${navTarget.replace(/"/g, '&quot;')}" onclick="event.stopPropagation();showNavModal(this.dataset.lat,this.dataset.lng,this.dataset.name)"><i class="fas fa-directions"></i> 导航</button></span></div>
                 <div class="checkin-card-meta"><i class="fas fa-map-pin"></i> ${item.city} · ${dateStr}</div>
                 ${addressLine}
                 ${metaLine}
@@ -1576,25 +1585,58 @@
         if (show) {
             renderCheckinMap();
         } else {
-            // 移除所有打卡标记
-            mapLayers = mapLayers.filter(l => { if (l._isCheckin) { map.removeLayer(l); return false; } return true; });
+            // 移除所有打卡标记（包括单个显示的）
+            mapLayers = mapLayers.filter(l => {
+                if (l._isCheckin) { map.removeLayer(l); return false; }
+                return true;
+            });
+            // 清除单个标记记录
+            Object.keys(checkinMarkersMap).forEach(k => { checkinMarkersMap[k].marker = null; });
         }
+    }
+
+    const CAT_COLORS = { love: '#00ACC1', h52: '#FF5722', biz: '#9C27B0', support: '#FF69B4', shop: '#4CAF50' };
+
+    function toggleSingleCheckinMarker(key) {
+        const entry = checkinMarkersMap[key];
+        if (!entry || !entry.coord) return;
+        if (entry.marker) {
+            // 隐藏：移除标记
+            map.removeLayer(entry.marker);
+            mapLayers = mapLayers.filter(l => l !== entry.marker);
+            entry.marker = null;
+        } else {
+            // 显示：添加标记
+            const color = CAT_COLORS[entry.category] || '#3182CE';
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="width:14px;height:14px;background:${color};border:2px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>`,
+                iconSize: [14, 14], iconAnchor: [7, 7]
+            });
+            const marker = L.marker(entry.coord, { icon }).addTo(map)
+                .bindPopup(`<b>${entry.name}</b><br>${entry.city}${entry.address ? '<br>' + entry.address : ''}`);
+            marker._isCheckin = true;
+            entry.marker = marker;
+            mapLayers.push(marker);
+            map.flyTo(entry.coord, 14, { duration: 1 });
+        }
+        // 更新按钮文字
+        renderCheckinList();
     }
 
     function renderCheckinMap() {
         // 移除旧的打卡标记
         mapLayers = mapLayers.filter(l => { if (l._isCheckin) { map.removeLayer(l); return false; } return true; });
         const filtered = getFilteredCheckins();
-        const catColors = { love: '#00ACC1', h52: '#FF5722', biz: '#9C27B0', support: '#FF69B4', shop: '#4CAF50' };
         filtered.forEach(item => {
             if (!item.coord) return;
-            const color = catColors[item.category] || '#3182CE';
+            const color = CAT_COLORS[item.category] || '#3182CE';
             const icon = L.divIcon({
                 className: '',
                 html: `<div style="width:12px;height:12px;background:${color};border:2px solid white;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
                 iconSize: [12, 12], iconAnchor: [6, 6]
             });
-            const marker = L.marker(item.coord, { icon }).addTo(map).bindPopup(`<b>${item.name}</b><br>${catColors[item.category] ? CATEGORIES[item.category].name + ' · ' : ''}${item.city}${item.address ? '<br>' + item.address : ''}`);
+            const marker = L.marker(item.coord, { icon }).addTo(map).bindPopup(`<b>${item.name}</b><br>${CAT_COLORS[item.category] ? CATEGORIES[item.category].name + ' · ' : ''}${item.city}${item.address ? '<br>' + item.address : ''}`);
             marker._isCheckin = true;
             mapLayers.push(marker);
         });
