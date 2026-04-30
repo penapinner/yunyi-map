@@ -128,7 +128,7 @@
             display: flex; gap: 4px; padding: 12px 20px;
             border-bottom: 1px solid var(--border); background: var(--bg);
         }
-        #listView, #calendarView { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+        #listView, #calendarView, #checkinView { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
         #calendarView { display: none; }
         .filter-tab {
             padding: 6px 14px; border-radius: 20px; font-size: 12px;
@@ -337,6 +337,144 @@
         .chart-card-title i { color: var(--accent); font-size: 12px; }
         .chart-container { flex: 1; min-height: 220px; }
 
+        /* ===== Checkin Categories ===== */
+        :root {
+            --cat-love: #E91E63;
+            --cat-h52: #FF5722;
+            --cat-biz: #9C27B0;
+            --cat-support: #FF9800;
+            --cat-shop: #4CAF50;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 10px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tab {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .category-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .cat-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .cat-love { background: var(--cat-love); }
+        .cat-h52 { background: var(--cat-h52); }
+        .cat-biz { background: var(--cat-biz); }
+        .cat-support { background: var(--cat-support); }
+        .cat-shop { background: var(--cat-shop); }
+
+        .checkin-stats {
+            padding: 0 16px 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .checkin-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 16px;
+        }
+        .checkin-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .checkin-card:active {
+            transform: scale(0.98);
+        }
+        .checkin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .checkin-card-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+        }
+        .tag-love { background: var(--cat-love); }
+        .tag-h52 { background: var(--cat-h52); }
+        .tag-biz { background: var(--cat-biz); }
+        .tag-support { background: var(--cat-support); }
+        .tag-shop { background: var(--cat-shop); }
+        .checkin-card-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .checkin-card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .checkin-card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .checkin-card-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 14px;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+        }
+        .checkin-card-nav:active { opacity: 0.7; }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+            width: 100%;
+        }
+        .nav-btn:active { background: var(--bg); }
+
         /* ===== Responsive ===== */
         @media (max-width: 768px) {
             .sidebar { width: 320px; position: absolute; right: 0; top: 56px; bottom: 0; z-index: 600; }
@@ -417,6 +555,7 @@
                 <div class="sidebar-view-toggle">
                     <button class="sidebar-view-btn active" id="btnList" onclick="switchView('list')"><i class="fas fa-list"></i> 列表</button>
                     <button class="sidebar-view-btn" id="btnCalendar" onclick="switchView('calendar')"><i class="fas fa-calendar-alt"></i> 日历</button>
+                    <button class="sidebar-view-btn" id="btnCheckin" onclick="switchView('checkin')"><i class="fas fa-map-marker-alt"></i> 打卡</button>
                 </div>
             </div>
             <div id="listView">
@@ -437,6 +576,33 @@
                     <button class="filter-tab" onclick="filterTrips('both', this)">双人</button>
                 </div>
                 <div class="calendar-container" id="calendarContainer"></div>
+            </div>
+            <div id="checkinView" style="display:none;">
+                <div class="category-tabs" id="categoryTabs">
+                    <button class="category-tab active" onclick="filterCheckin('all', this)">全部</button>
+                    <button class="category-tab" onclick="filterCheckin('love', this)"><span class="cat-dot cat-love"></span>爱情圣地</button>
+                    <button class="category-tab" onclick="filterCheckin('h52', this)"><span class="cat-dot cat-h52"></span>52圣地</button>
+                    <button class="category-tab" onclick="filterCheckin('biz', this)"><span class="cat-dot cat-biz"></span>活动商务</button>
+                    <button class="category-tab" onclick="filterCheckin('support', this)"><span class="cat-dot cat-support"></span>应援打卡</button>
+                    <button class="category-tab" onclick="filterCheckin('shop', this)"><span class="cat-dot cat-shop"></span>主题商店</button>
+                </div>
+                <div class="checkin-stats" id="checkinStats"></div>
+                <div class="checkin-list" id="checkinList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="navModal">
+        <div class="modal" style="max-width:360px;">
+            <div class="modal-header">
+                <h3 id="navTitle">导航到</h3>
+                <button class="modal-close" onclick="closeModal('navModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+                <button class="nav-btn" onclick="openNavApp('amap')"><i class="fas fa-map-marked-alt" style="color:#3182CE;"></i> 高德地图</button>
+                <button class="nav-btn" onclick="openNavApp('baidu')"><i class="fas fa-map" style="color:#E53935;"></i> 百度地图</button>
+                <button class="nav-btn" onclick="openNavApp('tencent')"><i class="fas fa-location-arrow" style="color:#07C160;"></i> 腾讯地图</button>
+                <button class="nav-btn" onclick="openNavApp('copy')"><i class="fas fa-copy" style="color:#999;"></i> 复制坐标</button>
             </div>
         </div>
     </div>
@@ -582,6 +748,10 @@
     let timeStart = null, timeEnd = null;
     let timeMonths = [];
     let echartsInstances = [];
+    let checkinItems = [];
+    let currentCategory = 'all';
+    let pendingNavCoord = null;
+    let pendingNavName = '';
 
     // ===== DATA =====
     // 数据从云数据库加载，不在此硬编码
@@ -795,9 +965,12 @@
         currentView = view;
         document.getElementById('btnList').classList.toggle('active', view === 'list');
         document.getElementById('btnCalendar').classList.toggle('active', view === 'calendar');
+        document.getElementById('btnCheckin').classList.toggle('active', view === 'checkin');
         document.getElementById('listView').style.display = view === 'list' ? 'flex' : 'none';
         document.getElementById('calendarView').style.display = view === 'calendar' ? 'flex' : 'none';
+        document.getElementById('checkinView').style.display = view === 'checkin' ? 'flex' : 'none';
         if (view === 'calendar') renderCalendar();
+        if (view === 'checkin') renderCheckinMap();
     }
 
     // ===== List Rendering =====
@@ -1032,6 +1205,15 @@
     // ===== Modal =====
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function showToast(msg) {
+        const container = document.getElementById('toastContainer');
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.textContent = msg;
+        container.appendChild(t);
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2000);
+    }
     document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); }); });
 
     // ===== Stats Panel =====
@@ -1218,7 +1400,186 @@
         });
     }
 
+    // ===== Checkin (打卡) =====
+    const CATEGORIES = {
+        love: { name: '爱情圣地', color: '#E91E63' },
+        h52: { name: '52圣地', color: '#FF5722' },
+        biz: { name: '活动商务', color: '#9C27B0' },
+        support: { name: '应援打卡', color: '#FF9800' },
+        shop: { name: '主题商店', color: '#4CAF50' }
+    };
+
+    const CHECKINS_FALLBACK = [
+        {"name":"八面咖啡","category":"love","city":"横店","coord":[29.15,120.33],"startDate":"2025-04-08","endDate":"2025-04-08","desc":"两人第一次相见的地方"},
+        {"name":"京东MALL（双井店）","category":"support","city":"北京","coord":[39.898,116.471],"address":"朝阳区广渠路31号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"幸棉投放"},
+        {"name":"冠宇牡丹园","category":"biz","city":"菏泽","coord":[35.25,115.47],"startDate":"2026-04-30","endDate":"2026-05-01","desc":"冠宇牡丹园活动"}
+    ];
+
+    function sortCheckins(items) {
+        // 按结束时间最近的排在前面（endDate 升序，未来的靠前）
+        return items.sort((a, b) => (a.endDate || a.startDate).localeCompare(b.endDate || b.startDate));
+    }
+
+    function loadCheckins() {
+        if (typeof cloud === 'undefined') {
+            checkinItems = sortCheckins([...CHECKINS_FALLBACK]);
+            renderCheckinList();
+            return Promise.resolve(false);
+        }
+        const c1 = new cloud.Cloud({ identityless: true, ...CLOUD_CONFIG });
+        return c1.init().then(() => {
+            const db = c1.database();
+            const MAX = 20;
+            let allData = [];
+            const batch = (skip) => {
+                return db.collection('checkins').orderBy('endDate', 'asc').skip(skip).limit(MAX).get()
+                    .then(res => {
+                        allData = allData.concat(res.data);
+                        if (res.data.length === MAX) return batch(skip + MAX);
+                        return allData;
+                    });
+            };
+            return batch(0).then(data => {
+                // 从 trips 集合查找带 checkinTag 的记录，转换为打卡格式合并
+                return db.collection('trips').where({ checkinTag: db.command.exists(true) }).get()
+                    .then(res => {
+                        const fromTrips = res.data.map(t => ({
+                            name: t.location || t.name || '',
+                            category: t.checkinTag,
+                            city: t.city || '',
+                            coord: t.coord || [],
+                            startDate: t.date || '',
+                            endDate: t.date || '',
+                            desc: t.desc || '',
+                            address: t.address || '',
+                            brand: t.brand || '',
+                            supportType: t.supportType || ''
+                        }));
+                        // 合并：以 name 去重，trips 补充的数据优先保留 checkins 中的
+                        const names = new Set(data.map(d => d.name));
+                        fromTrips.forEach(t => {
+                            if (!names.has(t.name)) data.push(t);
+                        });
+                        checkinItems = data.length ? sortCheckins(data) : sortCheckins([...CHECKINS_FALLBACK]);
+                        renderCheckinList();
+                        console.log('已从云数据库加载', data.length, '条打卡（含 trips 标记', fromTrips.length, '条）');
+                    });
+            });
+        }).catch(err => {
+            console.warn('打卡数据加载失败，使用本地数据:', err.message || err);
+            checkinItems = sortCheckins([...CHECKINS_FALLBACK]);
+            renderCheckinList();
+        });
+    }
+
+    function filterCheckin(cat, btn) {
+        currentCategory = cat;
+        document.querySelectorAll('#categoryTabs .category-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCheckinList();
+        renderCheckinMap();
+    }
+
+    function getFilteredCheckins() {
+        return currentCategory === 'all' ? checkinItems : checkinItems.filter(i => i.category === currentCategory);
+    }
+
+    function renderCheckinList() {
+        const container = document.getElementById('checkinList');
+        const stats = document.getElementById('checkinStats');
+        const filtered = getFilteredCheckins();
+        stats.textContent = `共 ${filtered.length} 个打卡地`;
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;"><i class="fas fa-map-marker-alt" style="font-size:32px;display:block;margin-bottom:12px;"></i>暂无打卡地点</div>';
+            return;
+        }
+        container.innerHTML = filtered.map(item => {
+            const cat = CATEGORIES[item.category] || { name: '', color: '#999' };
+            const dateStr = item.startDate === item.endDate ? item.startDate : `${item.startDate} ~ ${item.endDate}`;
+            const safeName = (item.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const addressLine = item.address ? `<div class="checkin-card-meta"><i class="fas fa-location-dot"></i> ${item.address}</div>` : '';
+            const brandLine = item.brand ? `<div class="checkin-card-meta"><i class="fas fa-tag"></i> 投放方：${item.brand}</div>` : '';
+            const supportLine = item.supportType ? `<div class="checkin-card-meta"><i class="fas fa-bullhorn"></i> 应援类型：${item.supportType}</div>` : '';
+            // 应援打卡导航：城市+地址+名称
+            const navTarget = (item.category === 'support' && item.address)
+                ? `${item.city}${item.address}${item.name}` : item.name;
+            const safeNavTarget = navTarget.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            return `<div class="checkin-card" onclick="flyToCheckin(${item.coord[0]},${item.coord[1]})">
+                <div class="checkin-card-header">
+                    <span class="checkin-card-tag tag-${item.category}">${cat.name}</span>
+                </div>
+                <div class="checkin-card-name">${item.name}</div>
+                <div class="checkin-card-meta"><i class="fas fa-map-pin"></i> ${item.city} · ${dateStr}</div>
+                ${addressLine}
+                ${brandLine}
+                ${supportLine}
+                ${item.desc ? `<div class="checkin-card-desc">${item.desc}</div>` : ''}
+                <button class="checkin-card-nav" onclick="event.stopPropagation();showNavModal(${item.coord[0]},${item.coord[1]},'${safeNavTarget}')"><i class="fas fa-directions"></i> 导航</button>
+            </div>`;
+        }).join('');
+    }
+
+    function flyToCheckin(lat, lng) {
+        map.flyTo([lat, lng], 14, { duration: 1 });
+    }
+
+    function renderCheckinMap() {
+        // 移除旧的打卡标记
+        mapLayers = mapLayers.filter(l => { if (l._isCheckin) { map.removeLayer(l); return false; } return true; });
+        const filtered = getFilteredCheckins();
+        const catColors = { love: '#E91E63', h52: '#FF5722', biz: '#9C27B0', support: '#FF9800', shop: '#4CAF50' };
+        filtered.forEach(item => {
+            if (!item.coord) return;
+            const color = catColors[item.category] || '#3182CE';
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="width:12px;height:12px;background:${color};border:2px solid white;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [12, 12], iconAnchor: [6, 6]
+            });
+            const marker = L.marker(item.coord, { icon }).addTo(map).bindPopup(`<b>${item.name}</b><br>${catColors[item.category] ? CATEGORIES[item.category].name + ' · ' : ''}${item.city}${item.address ? '<br>' + item.address : ''}`);
+            marker._isCheckin = true;
+            mapLayers.push(marker);
+        });
+        if (filtered.length > 0) {
+            const coords = filtered.filter(i => i.coord).map(i => i.coord);
+            if (coords.length) map.flyToBounds(L.latLngBounds(coords).pad(0.15), { duration: 1.2 });
+        }
+    }
+
+    function showNavModal(lat, lng, name) {
+        pendingNavCoord = [lat, lng];
+        pendingNavName = name;
+        document.getElementById('navTitle').textContent = `导航到「${name}」`;
+        openModal('navModal');
+    }
+
+    function openNavApp(type) {
+        if (!pendingNavCoord) return;
+        const [lat, lng] = pendingNavCoord;
+        const name = encodeURIComponent(pendingNavName);
+        const latlng = `${lat},${lng}`;
+        let url;
+        switch(type) {
+            case 'amap':
+                url = `https://uri.amap.com/navigation?to=${lng},${lat},${name}&mode=bus&callnative=1`;
+                break;
+            case 'baidu':
+                url = `https://api.map.baidu.com/direction?destination=name:${name}|latlng:${latlng}&coord_type=gcj02&mode=transit&output=html`;
+                break;
+            case 'tencent':
+                url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&tocoord=${latlng}&type=drive`;
+                break;
+            case 'copy':
+                navigator.clipboard.writeText(`${lat},${lng}`).then(() => showToast('坐标已复制'));
+                closeModal('navModal');
+                return;
+        }
+        window.open(url, '_blank');
+        closeModal('navModal');
+    }
+
     loadFromCloud().then(() => {
+        loadCheckins();
         // Stats panel is open by default, render charts after a short delay
         setTimeout(() => {
             renderCharts();
