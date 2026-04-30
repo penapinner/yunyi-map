@@ -1547,9 +1547,9 @@
             const addressLine = item.address ? `<div class="checkin-card-meta"><i class="fas fa-location-dot"></i> ${item.address}</div>` : '';
             const brandLine = item.brand ? `<div class="checkin-card-meta"><i class="fas fa-tag"></i> 投放方：${item.brand}</div>` : '';
             const supportLine = item.supportType ? `<div class="checkin-card-meta"><i class="fas fa-bullhorn"></i> 应援类型：${item.supportType}</div>` : '';
-            // 应援打卡导航：城市+地址+名称
-            const navTarget = (item.category === 'support' && item.address)
-                ? `${item.city}${item.address}${item.name}` : item.name;
+            // 导航目标：优先 城市+地址+名称，其次 城市+名称
+            const navTarget = item.address
+                ? `${item.city}${item.address}${item.name}` : `${item.city}${item.name}`;
             const safeNavTarget = navTarget.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             return `<div class="checkin-card" onclick="flyToCheckin(${item.coord[0]},${item.coord[1]})">
                 <div class="checkin-card-header">
@@ -1601,23 +1601,24 @@
     }
 
     function openNavApp(type) {
-        if (!pendingNavCoord) return;
-        const [lat, lng] = pendingNavCoord;
+        if (!pendingNavName) return;
         const name = encodeURIComponent(pendingNavName);
-        const latlng = `${lat},${lng}`;
         let url;
         switch(type) {
             case 'amap':
-                url = `https://uri.amap.com/navigation?to=${lng},${lat},${name}&mode=bus&callnative=1`;
+                url = `https://uri.amap.com/navigation?to=${name}&mode=bus&callnative=1`;
                 break;
             case 'baidu':
-                url = `https://api.map.baidu.com/direction?destination=name:${name}|latlng:${latlng}&coord_type=gcj02&mode=transit&output=html`;
+                url = `https://api.map.baidu.com/direction?destination=name:${name}&mode=transit&output=html`;
                 break;
             case 'tencent':
-                url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&tocoord=${latlng}&type=drive`;
+                url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&type=drive`;
                 break;
             case 'copy':
-                navigator.clipboard.writeText(`${lat},${lng}`).then(() => showToast('坐标已复制'));
+                if (pendingNavCoord) {
+                    const [lat, lng] = pendingNavCoord;
+                    navigator.clipboard.writeText(`${lat},${lng}`).then(() => showToast('坐标已复制'));
+                }
                 closeModal('navModal');
                 return;
         }
