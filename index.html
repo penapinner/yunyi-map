@@ -1620,13 +1620,21 @@
                 url = `https://maps.apple.com/?daddr=${name}`;
                 break;
             case 'amap':
-                url = `https://uri.amap.com/navigation?to=${name}&mode=bus&callnative=1`;
+                if (pendingNavCoord && pendingNavCoord[0] && pendingNavCoord[1]) {
+                    url = `https://uri.amap.com/navigation?to=${pendingNavCoord[1]},${pendingNavCoord[0]},${name}&mode=car&callnative=1`;
+                } else {
+                    url = `https://m.amap.com/search/?query=${name}`;
+                }
                 break;
             case 'tencent':
-                url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&type=drive`;
+                if (pendingNavCoord && pendingNavCoord[0] && pendingNavCoord[1]) {
+                    url = `https://apis.map.qq.com/uri/v1/routeplan?to=${pendingNavCoord[1]},${pendingNavCoord[0]},${name}&type=drive`;
+                } else {
+                    url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&type=drive`;
+                }
                 break;
             case 'baidu':
-                url = `https://api.map.baidu.com/direction?destination=name:${name}&mode=transit&output=html`;
+                url = `https://api.map.baidu.com/direction?destination=name:${name}&mode=driving&origin=我的位置&output=html&src=webapp`;
                 break;
         }
         window.open(url, '_blank');
