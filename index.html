@@ -743,7 +743,7 @@
     let calendarMonth = _now.getMonth();
     let selectedDate = null;
     let activeItemId = null;
-    let map, mapLayers = [];
+    let map, mapLayers = [], baseLayers = {};
     let statsOpen = true;
     let timeStart = null, timeEnd = null;
     let timeMonths = [];
@@ -865,10 +865,21 @@
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         // ArcGIS 矢量底图（默认）
-        const arcgis = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        baseLayers.arcgis = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; <a href="https://www.arcgis.com/">Esri</a>',
             maxZoom: 20
         }).addTo(map);
+
+        // 腾讯地图底图（GCJ-02 坐标系，注意 y 轴用负值）
+        baseLayers.tencent = L.tileLayer('https://rt{s}.map.gtimg.com/realtimerender?z={z}&x={x}&y={-y}&type=vector&style=0', {
+            subdomains: '0123',
+            attribution: '&copy; <a href="https://map.qq.com/">腾讯地图</a>',
+            maxZoom: 18
+        });
+
+        // 底图切换控件
+        L.control.layers(baseLayers, null, { position: 'topright', collapsed: false }).addTo(map);
+
         renderMap();
     }
     function renderMap() {
@@ -1411,13 +1422,49 @@
 
     const CHECKINS_FALLBACK = [
         {"name":"八面咖啡","category":"love","city":"横店","coord":[29.15,120.33],"startDate":"2025-04-08","endDate":"2025-04-08","desc":"两人第一次相见的地方"},
-        {"name":"京东MALL（双井店）","category":"support","city":"北京","coord":[39.898,116.471],"address":"朝阳区广渠路31号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"幸棉投放"},
-        {"name":"冠宇牡丹园","category":"biz","city":"菏泽","coord":[35.25,115.47],"startDate":"2026-04-30","endDate":"2026-05-01","desc":"冠宇牡丹园活动"}
+        {"name":"冠宇牡丹园","category":"biz","city":"菏泽","coord":[35.25,115.47],"startDate":"2026-04-30","endDate":"2026-05-01","desc":"冠宇牡丹园活动"},
+        {"name":"重庆超体京东MALL","category":"support","city":"重庆","coord":[29.593,106.544],"address":"重庆市江北区金渝大道149号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"户外大屏"},
+        {"name":"苏州京东MALL","category":"support","city":"苏州","coord":[31.375,120.639],"address":"苏州市相城区嘉元路188号王府井1-3层","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"户外大屏"},
+        {"name":"天津京东MALL","category":"support","city":"天津","coord":[39.13,117.2],"address":"天津市南开区南马路18号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"户外西南面裸眼3D屏"},
+        {"name":"广州京东MALL","category":"support","city":"广州","coord":[23.084,113.264],"address":"广州市海珠区工业大道110号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"室外裸眼3D"},
+        {"name":"武汉京东MALL","category":"support","city":"武汉","coord":[30.588,114.316],"address":"武汉市武昌区秦园路26号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"室外裸眼3D"},
+        {"name":"长沙京东MALL","category":"support","city":"长沙","coord":[28.152,112.883],"address":"长沙市岳麓区洋湖街道景园路376号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"户外大屏（主入口）"},
+        {"name":"西安曲江京东MALL","category":"support","city":"西安","coord":[34.227,108.981],"address":"西安市雁塔区曲江路618号汉华城","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"裸眼3D大屏"},
+        {"name":"成都京东MALL","category":"support","city":"成都","coord":[30.636,104.065],"address":"成都市武侯区盛和一路66号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"裸眼3D大屏"},
+        {"name":"深圳京东MALL","category":"support","city":"深圳","coord":[22.539,113.931],"address":"深圳市南山区南海大道2746号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"中庭大屏"},
+        {"name":"北京京东MALL（双井店）","category":"support","city":"北京","coord":[39.898,116.471],"address":"北京市朝阳区广渠路31号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"中庭大屏"},
+        {"name":"太原京东MALL","category":"support","city":"太原","coord":[37.807,112.556],"address":"太原市小店区长风街125号","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"裸眼3D大屏"},
+        {"name":"沈阳京东MALL","category":"support","city":"沈阳","coord":[41.81,123.475],"address":"沈阳市大东区滂江街22号龙之梦购物中心","startDate":"2026-04-30","endDate":"2026-05-01","brand":"幸棉","supportType":"裸眼3D大屏"}
     ];
+
+    let userCoord = null; // 用户当前位置坐标
 
     function sortCheckins(items) {
         // 按结束时间最近的排在前面（endDate 升序，未来的靠前）
-        return items.sort((a, b) => (a.endDate || a.startDate).localeCompare(b.endDate || b.startDate));
+        // 相同 endDate 则按距离用户从近到远排
+        return items.sort((a, b) => {
+            const da = a.endDate || a.startDate;
+            const db2 = b.endDate || b.startDate;
+            const cmp = da.localeCompare(db2);
+            if (cmp !== 0) return cmp;
+            if (!userCoord || !a.coord || !b.coord) return 0;
+            const distA = Math.hypot((a.coord[0]||0) - userCoord[0], (a.coord[1]||0) - userCoord[1]);
+            const distB = Math.hypot((b.coord[0]||0) - userCoord[0], (b.coord[1]||0) - userCoord[1]);
+            return distA - distB;
+        });
+    }
+
+    function tryGetUserLocation() {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                userCoord = [pos.coords.latitude, pos.coords.longitude];
+                // 重新排序并刷新列表
+                checkinItems = sortCheckins(checkinItems);
+                renderCheckinList();
+            },
+            () => {} // 静默失败，不影响使用
+        );
     }
 
     function loadCheckins() {
@@ -1580,6 +1627,7 @@
 
     loadFromCloud().then(() => {
         loadCheckins();
+        tryGetUserLocation();
         // Stats panel is open by default, render charts after a short delay
         setTimeout(() => {
             renderCharts();
