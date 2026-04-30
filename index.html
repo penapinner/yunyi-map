@@ -583,8 +583,77 @@
     let echartsInstances = [];
 
     // ===== DATA =====
-    // 数据从云数据库加载，本地无数据
-    const allItems = [];
+    // 从 trips-backup.json 同步的静态 fallback 数据（云数据库不可用时使用）
+    const allItems = [
+  { "id":"b0", "type":"event", "date":"2025-04-08", "location":"横店八面咖啡", "coord":[29.15,120.33], "persons":["yunqi","haoyiran"], "desc":"两人在横店的 eight face coffee（八面咖啡）第一次相见，下午3点", "link":"https://www.dianping.com" },
+  { "id":"h1", "type":"event", "date":"2025-04-01", "location":"横店", "coord":[29.16,120.29], "persons":["haoyiran"], "desc":"《她唇之上》杀青，杀青微博已隐藏" },
+  { "id":"b1", "type":"trip", "date":"2025-09-15", "from":"北京", "to":"北京", "fromCoord":[39.92,116.41], "toCoord":[39.92,116.41], "persons":["yunqi","haoyiran"], "desc":"FUTURE MODA中国意大利时尚日 隆福寺举办，一起看秀", "link":"https://weibo.com/7997469042/Q4NIuxum1", "transport":"flight" },
+  { "id":"b2", "type":"event", "date":"2025-10-15", "location":"北京", "coord":[40.21,116.23], "persons":["yunqi","haoyiran"], "desc":"拍红秀和星光卡，觅舍酒店拍摄" },
+  { "id":"b3", "type":"event", "date":"2025-11-18", "location":"北京环球影城", "coord":[39.85,116.68], "persons":["yunqi","haoyiran"], "desc":"双人环球影城 vlog", "link":"https://weibo.com/6372221076/QeTnqayD8" },
+  { "id":"b4", "type":"event", "date":"2025-11-25", "location":"北京", "coord":[39.85,116.27], "persons":["yunqi","haoyiran"], "desc":"四人变双人直播" },
+  { "id":"b5", "type":"event", "date":"2025-11-30", "location":"北京", "coord":[39.92,116.40], "persons":["yunqi","haoyiran"], "desc":"Re剧456，下午Re剧和陈建宇连线聊吻戏感受，晚上一起发微博", "link":"https://weibo.com/7997469042/QggRcCZI8" },
+  { "id":"b6", "type":"event", "date":"2025-12-01", "location":"北京", "coord":[39.91,116.48], "persons":["yunqi","haoyiran"], "desc":"第一次抖音直播，说了句房间干就被下了" },
+  { "id":"b7", "type":"event", "date":"2025-12-05", "location":"北京", "coord":[39.82,116.32], "persons":["yunqi","haoyiran"], "desc":"双人直播教粤语。普普第一次卷毛+眼镜，教粤语偷偷表白：晴天阴天暴雨天，爱你爱到发晒癫" },
+  { "id":"b8", "type":"event", "date":"2025-12-10", "location":"北京", "coord":[39.81,116.47], "persons":["yunqi","haoyiran"], "desc":"双人直播说泰语：没有哪个男人会比你更好" },
+  { "id":"b9", "type":"event", "date":"2025-12-12", "location":"北京", "coord":[39.88,116.53], "persons":["yunqi","haoyiran"], "desc":"两人一起拍了初雪玩雪打闹视频" },
+  { "id":"h2", "type":"event", "date":"2025-12-12", "location":"北京", "coord":[39.88,116.53], "persons":["haoyiran"], "desc":"拍《So figaro》单人封面，在东西影棚拍" },
+  { "id":"b10", "type":"event", "date":"2025-12-15", "location":"北京", "coord":[39.78,116.35], "persons":["yunqi","haoyiran"], "desc":"双人直播喊樊霄" },
+  { "id":"b11", "type":"event", "date":"2025-12-23", "location":"北京", "coord":[39.76,116.20], "persons":["yunqi","haoyiran"], "desc":"与妻书之后的第一场直播。网梗乱飞：草莓米老鼠、粗莓、唱歌，小孩哥把普普按在怀里安慰" },
+  { "id":"b12", "type":"event", "date":"2025-12-28", "location":"北京", "coord":[39.75,116.44], "persons":["yunqi","haoyiran"], "desc":"双人直播换衣服，宣布番外拍摄计划" },
+  { "id":"b13", "type":"event", "date":"2025-12-31", "location":"北京", "coord":[39.73,116.26], "persons":["yunqi","haoyiran"], "desc":"双人直播跨年：顺风顺水顺财神" },
+  { "id":"b14", "type":"event", "date":"2026-01-02", "location":"北京", "coord":[39.91,116.46], "persons":["yunqi","haoyiran"], "desc":"买滑雪服", "link":"https://weibo.com/6469948631/QspM2eL1i" },
+  { "id":"b15", "type":"event", "date":"2026-01-03", "location":"北京", "coord":[39.90,116.31], "persons":["yunqi","haoyiran"], "desc":"Re13 14 15，完结剧组聚餐" },
+  { "id":"h3", "type":"trip", "date":"2025-12-16", "from":"北京", "to":"重庆", "fromCoord":[39.52,116.43], "toCoord":[29.72,106.66], "persons":["haoyiran"], "desc":"北京飞重庆，拍商务", "transport":"flight" },
+  { "id":"b16", "type":"event", "date":"2026-01-04", "location":"北京", "coord":[39.71,116.32], "persons":["yunqi","haoyiran"], "desc":"双人直播不拆名场面" },
+  { "id":"b17", "type":"trip", "date":"2026-01-07", "from":"北京", "to":"杭州", "fromCoord":[39.51,116.43], "toCoord":[30.23,120.43], "persons":["yunqi","haoyiran"], "desc":"北京飞杭州", "transport":"flight" },
+  { "id":"b18", "type":"event", "date":"2026-01-08", "location":"杭州", "coord":[30.26,120.20], "persons":["yunqi","haoyiran"], "desc":"拍澳门演唱会VCR" },
+  { "id":"b19", "type":"event", "date":"2026-01-09", "location":"杭州", "coord":[30.26,120.20], "persons":["yunqi","haoyiran"], "desc":"晚上吃烤鱼超辣，云旗凌晨三点还在拉肚子" },
+  { "id":"y1", "type":"event", "date":"2026-01-10", "location":"杭州", "coord":[30.29,120.17], "persons":["yunqi"], "desc":"晚上8点花西子直播" },
+  { "id":"b20", "type":"trip", "date":"2026-01-11", "from":"杭州", "to":"上海", "fromCoord":[30.18,120.02], "toCoord":[31.18,121.45], "persons":["yunqi","haoyiran"], "desc":"杭州去上海", "transport":"car" },
+  { "id":"b21", "type":"event", "date":"2026-01-11", "location":"上海", "coord":[31.03,121.22], "persons":["yunqi","haoyiran"], "desc":"早上上海灰石空间，云旗拍《so figaro》单人封面，郝熠然陪同。晚上直播并请假" },
+  { "id":"b22", "type":"trip", "date":"2026-01-13", "from":"上海", "to":"亚庇", "fromCoord":[30.99,121.90], "toCoord":[5.93,116.09], "persons":["yunqi","haoyiran"], "desc":"12号晚10点多到浦东机场，13号凌晨3-4点飞机起飞，飞亚庇准备番外", "transport":"flight" },
+  { "id":"b23", "type":"event", "date":"2026-01-14", "location":"亚庇海滩", "coord":[5.97,116.06], "persons":["yunqi","haoyiran"], "desc":"海滩抓螃蟹，照片是普普拿陈建宇的iPhone8拍的", "link":"https://weibo.com/7997469042/QnGMOFeRZ" },
+  { "id":"b24", "type":"trip", "date":"2026-01-15", "from":"亚庇", "to":"曼谷", "fromCoord":[5.93,116.05], "toCoord":[13.72,100.75], "persons":["yunqi","haoyiran"], "desc":"亚庇飞曼谷番外转场", "transport":"flight" },
+  { "id":"b25", "type":"event", "date":"2026-01-15", "location":"曼谷", "coord":[13.72,100.49], "persons":["yunqi","haoyiran"], "desc":"番外开始拍摄，22号早上拍完" },
+  { "id":"h4", "type":"event", "date":"2026-01-17", "location":"重庆", "coord":[29.58,106.45], "persons":["haoyiran"], "desc":"排队2小时买陈建平麻花（爱情麻花）" },
+  { "id":"h5", "type":"trip", "date":"2026-01-18", "from":"重庆", "to":"北京", "fromCoord":[29.72,106.66], "toCoord":[39.51,116.43], "persons":["haoyiran"], "desc":"重庆回北京", "transport":"flight" },
+  { "id":"h6", "type":"event", "date":"2026-01-24", "location":"广州", "coord":[23.12,113.27], "persons":["haoyiran"], "desc":"打卡北京路美康粉黛自己的大屏" },
+  { "id":"y2", "type":"event", "date":"2026-01-24", "location":"广州", "coord":[23.00,113.35], "persons":["yunqi"], "desc":"下午2点番禺天河城花间颂线下活动，晚上8点花间颂直播", "link":"https://weibo.com/7997469042/QoCd27iHb" },
+  { "id":"b26", "type":"trip", "date":"2026-01-22", "from":"曼谷", "to":"广州", "fromCoord":[13.69,100.75], "toCoord":[23.41,113.31], "persons":["yunqi","haoyiran"], "desc":"早上结束番外拍摄，下午2点直播，六点多到素万那普机场，晚上10点到白云机场", "transport":"flight" },
+  { "id":"b27", "type":"event", "date":"2026-01-23", "location":"广州", "coord":[23.08,113.32], "persons":["yunqi","haoyiran"], "desc":"宵夜吃了烧鸭" },
+  { "id":"h7", "type":"event", "date":"2026-01-30", "location":"广州", "coord":[23.14,113.26], "persons":["haoyiran"], "desc":"膜法世家直播" },
+  { "id":"b28", "type":"trip", "date":"2026-01-25", "from":"广州", "to":"北京", "fromCoord":[23.39,113.31], "toCoord":[39.51,116.43], "persons":["yunqi","haoyiran"], "desc":"广州飞北京", "transport":"flight" },
+  { "id":"b29", "type":"event", "date":"2026-01-27", "location":"广州", "coord":[23.38,113.31], "persons":["yunqi","haoyiran"], "desc":"北京出发飞广州，四五点落地" },
+  { "id":"b30", "type":"trip", "date":"2026-01-27", "from":"北京", "to":"广州", "fromCoord":[39.51,116.43], "toCoord":[23.39,113.31], "persons":["yunqi","haoyiran"], "desc":"北京飞广州", "transport":"flight" },
+  { "id":"b31", "type":"event", "date":"2026-01-28", "location":"广州", "coord":[23.12,113.32], "persons":["yunqi","haoyiran"], "desc":"卡姿兰商务直播" },
+  { "id":"h8", "type":"trip", "date":"2026-02-15", "from":"成都", "to":"北京", "fromCoord":[30.57,103.96], "toCoord":[39.51,116.42], "persons":["haoyiran"], "desc":"成都飞北京，回北京陪父母过年，发年终总结微博", "transport":"flight", "link":"https://weibo.com/6372221076/QrZtbj01S" },
+  { "id":"h9", "type":"event", "date":"2026-02-18", "from":"北京", "to":"成都", "fromCoord":[39.51,116.42], "toCoord":[30.57,103.96], "persons":["haoyiran"], "desc":"回成都", "transport":"flight", "isTrip":true },
+  { "id":"h10", "type":"event", "date":"2026-02-04", "location":"成都", "coord":[30.71,103.80], "persons":["haoyiran"], "desc":"美康粉黛直播，20:00-21:00，有公开接上班", "link":"https://weibo.com/6372221076/QqipQitnP" },
+  { "id":"y3", "type":"event", "date":"2026-02-16", "location":"都江堰", "coord":[31.00,103.61], "persons":["yunqi"], "desc":"过除夕。和友人于都江堰南桥旅游，晚上17点发微博，后偶遇粉丝并手写新年快乐祝福语", "link":"https://weibo.com/7997469042/Qs8QitHvy" },
+  { "id":"b32", "type":"trip", "date":"2026-01-31", "from":"广州", "to":"成都", "fromCoord":[23.39,113.30], "toCoord":[30.57,103.96], "persons":["yunqi","haoyiran"], "desc":"早上飞下午到，未公开行程", "transport":"flight" },
+  { "id":"b33", "type":"event", "date":"2026-02-01", "location":"成都", "coord":[30.66,104.06], "persons":["yunqi","haoyiran"], "desc":"成都拍摄，白西装" },
+  { "id":"b34", "type":"event", "date":"2026-02-08", "location":"成都", "coord":[30.64,104.06], "persons":["yunqi","haoyiran"], "desc":"双人直播洗狗。一直在成都租房训练上课" },
+  { "id":"b35", "type":"trip", "date":"2026-02-26", "from":"成都", "to":"珠海", "fromCoord":[30.57,103.95], "toCoord":[22.25,113.59], "persons":["yunqi","haoyiran"], "desc":"成都飞珠海，准备演唱会", "transport":"flight" },
+  { "id":"b36", "type":"event", "date":"2026-02-27", "location":"澳门", "coord":[22.15,113.55], "persons":["yunqi","haoyiran"], "desc":"演唱会彩排直播6分钟，晚上下班和粉丝打招呼，普普当天准备了给粉丝的小球" },
+  { "id":"b37", "type":"event", "date":"2026-02-28", "location":"澳门", "coord":[22.15,113.55], "persons":["yunqi","haoyiran"], "desc":"澳门百老汇演唱会（2.28/3.1/3.2 三场）" },
+  { "id":"b38", "type":"event", "date":"2026-03-05", "location":"香港", "coord":[22.28,114.16], "persons":["yunqi","haoyiran"], "desc":"演唱会结束后放松碎片，抓娃娃", "link":"https://weibo.com/5906595599/QuJe024WU" },
+  { "id":"b39", "type":"event", "date":"2026-03-06", "location":"香港", "coord":[22.28,114.16], "persons":["yunqi","haoyiran"], "desc":"演唱会结束后休假，坐叮叮车", "link":"https://weibo.com/5906595599/Qva1hqdzo" },
+  { "id":"b40", "type":"trip", "date":"2026-03-07", "from":"香港", "to":"北京", "fromCoord":[22.31,113.93], "toCoord":[39.51,116.43], "persons":["yunqi","haoyiran"], "desc":"香港飞北京", "transport":"flight" },
+  { "id":"h11", "type":"trip", "date":"2026-03-19", "from":"成都", "to":"杭州", "fromCoord":[30.57,103.96], "toCoord":[30.24,120.43], "persons":["haoyiran"], "desc":"成都飞杭州，准备莉肯商务直播", "transport":"flight" },
+  { "id":"h12", "type":"event", "date":"2026-03-20", "location":"杭州", "coord":[30.25,120.29], "persons":["haoyiran"], "desc":"莉肯商务直播" },
+  { "id":"h13", "type":"trip", "date":"2026-03-21", "from":"杭州", "to":"成都", "fromCoord":[30.24,120.43], "toCoord":[30.57,103.96], "persons":["haoyiran"], "desc":"莉肯活动结束回成都继续准备演唱会", "transport":"flight" },
+  { "id":"y4", "type":"trip", "date":"2026-03-19", "from":"成都", "to":"上海", "fromCoord":[30.57,103.96], "toCoord":[31.00,121.89], "persons":["yunqi"], "desc":"成都飞上海，准备濮院高定时尚周", "transport":"flight" },
+  { "id":"y5", "type":"event", "date":"2026-03-20", "location":"濮院", "coord":[30.69,120.63], "persons":["yunqi"], "desc":"濮院高定时尚周day1，和粉丝打招呼，领闭走秀" },
+  { "id":"y6", "type":"event", "date":"2026-03-21", "location":"濮院", "coord":[30.69,120.63], "persons":["yunqi"], "desc":"濮院高定时尚周day2，和粉丝打招呼，红毯+晚宴+直播" },
+  { "id":"y7", "type":"trip", "date":"2026-03-22", "from":"上海", "to":"成都", "fromCoord":[31.00,121.89], "toCoord":[30.57,103.96], "persons":["yunqi"], "desc":"四点多飞机，八点多回成都", "transport":"flight" },
+  { "id":"b41", "type":"trip", "date":"2026-03-09", "from":"北京", "to":"广州", "fromCoord":[39.51,116.43], "toCoord":[23.39,113.31], "persons":["yunqi","haoyiran"], "desc":"北京飞广州", "transport":"flight" },
+  { "id":"b42", "type":"trip", "date":"2026-04-24", "from":"成都", "to":"曼谷", "fromCoord":[30.57,104.07], "toCoord":[13.69,100.75], "persons":["yunqi","haoyiran"], "desc":"两人从成都出发，飞往曼谷开启泰国之旅", "transport":"flight" },
+  { "id":"b43", "type":"trip", "date":"2026-04-27", "from":"曼谷", "to":"北京", "fromCoord":[13.69,100.75], "toCoord":[39.51,116.41], "persons":["haoyiran"], "desc":"郝熠然从曼谷素万那普机场飞回北京大兴机场", "transport":"flight" },
+  { "id":"b44", "type":"trip", "date":"2026-04-27", "from":"曼谷", "to":"上海", "fromCoord":[13.69,100.75], "toCoord":[31.23,121.47], "persons":["yunqi"], "desc":"云旗从曼谷素万那普机场飞往上海", "transport":"flight" },
+  { "id":"y8", "type":"event", "date":"2026-04-29", "location":"上海外滩十八号", "coord":[31.24,121.49], "persons":["yunqi"], "desc":"中意时尚文化季·风尚之夜活动" },
+  { "id":"b45", "type":"event", "date":"2026-04-25", "time":"19:00", "location":"曼谷雷霆穹顶体育馆", "coord":[13.76,100.57], "persons":["yunqi","haoyiran"], "desc":"曼谷雷霆穹顶 Thunder Dome 演唱会 Day 1，当地时间19:00开演" },
+  { "id":"b46", "type":"event", "date":"2026-04-26", "time":"19:00", "location":"曼谷雷霆穹顶体育馆", "coord":[13.76,100.57], "persons":["yunqi","haoyiran"], "desc":"曼谷雷霆穹顶 Thunder Dome 演唱会 Day 2，当地时间19:00开演" }
+];
 
     // ===== Helper Functions =====
     function getItemType(item) {
@@ -1167,7 +1236,7 @@
             let allData = [];
             const batch = (skip) => {
                 return db.collection('trips')
-                    .orderBy('date', 'asc')
+                    .orderBy('date', 'desc')
                     .skip(skip)
                     .limit(MAX)
                     .get()
