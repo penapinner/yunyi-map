@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>云旗 & 郝熠然 — 值得一路同行</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
@@ -49,10 +50,12 @@
         .topbar-left { display: flex; align-items: center; gap: 12px; }
         .topbar-logo {
             width: 36px; height: 36px;
-            background: linear-gradient(135deg, var(--cyan), var(--orange));
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: white; font-weight: 700;
+            border-radius: 10px; overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,188,193,0.3);
+            flex-shrink: 0;
+        }
+        .topbar-logo img {
+            width: 100%; height: 100%; object-fit: cover;
         }
         .topbar-title { font-size: 18px; font-weight: 700; color: var(--text); }
         .topbar-right { display: flex; align-items: center; gap: 16px; }
@@ -397,9 +400,9 @@
         }
         .checkin-card {
             background: var(--bg-white);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             box-shadow: 0 1px 3px var(--shadow);
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -412,12 +415,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .checkin-card-tag {
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
+            font-size: 10px;
+            padding: 1px 7px;
+            border-radius: 8px;
             color: white;
             font-weight: 500;
         }
@@ -427,34 +430,39 @@
         .tag-support { background: var(--cat-support); }
         .tag-shop { background: var(--cat-shop); }
         .checkin-card-name {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
         .checkin-card-meta {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            line-height: 1.4;
         }
         .checkin-card-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .checkin-card-nav {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            margin-top: 8px;
-            padding: 4px 12px;
-            border-radius: 14px;
+            gap: 3px;
+            padding: 2px 8px;
+            border-radius: 12px;
             background: var(--accent-light);
             color: var(--accent);
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             border: none;
             font-weight: 500;
+            flex-shrink: 0;
         }
         .checkin-card-nav:active { opacity: 0.7; }
 
@@ -491,7 +499,7 @@
 
     <div class="topbar">
         <div class="topbar-left">
-            <div class="topbar-logo"><i class="fas fa-route"></i></div>
+            <div class="topbar-logo"><img src="logo.png" alt="logo"></div>
             <span class="topbar-title">云旗 & 郝熠然 · 值得一路同行</span>
         </div>
         <div class="topbar-right">
@@ -1541,8 +1549,9 @@
             const dateStr = item.startDate === item.endDate ? item.startDate : `${item.startDate} ~ ${item.endDate}`;
             const safeName = (item.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             const addressLine = item.address ? `<div class="checkin-card-meta"><i class="fas fa-location-dot"></i> ${item.address}</div>` : '';
-            const brandLine = item.brand ? `<div class="checkin-card-meta"><i class="fas fa-tag"></i> 投放方：${item.brand}</div>` : '';
-            const supportLine = item.supportType ? `<div class="checkin-card-meta"><i class="fas fa-bullhorn"></i> 应援类型：${item.supportType}</div>` : '';
+            const metaLine = (item.brand || item.supportType)
+                ? `<div class="checkin-card-meta">${item.brand ? `<i class="fas fa-tag"></i> 投放方：${item.brand}` : ''}${item.brand && item.supportType ? ' · ' : ''}${item.supportType ? `<i class="fas fa-bullhorn"></i> 应援类型：${item.supportType}` : ''}</div>`
+                : '';
             // 导航目标：优先 城市+地址+名称，其次 城市+名称
             const navTarget = item.address
                 ? `${item.city}${item.address}${item.name}` : `${item.city}${item.name}`;
@@ -1550,13 +1559,11 @@
                 <div class="checkin-card-header">
                     <span class="checkin-card-tag tag-${item.category}">${cat.name}</span>
                 </div>
-                <div class="checkin-card-name">${item.name}</div>
+                <div class="checkin-card-name"><span>${item.name}</span><button class="checkin-card-nav" data-lat="${item.coord[0]}" data-lng="${item.coord[1]}" data-name="${navTarget.replace(/"/g, '&quot;')}" onclick="event.stopPropagation();showNavModal(this.dataset.lat,this.dataset.lng,this.dataset.name)"><i class="fas fa-directions"></i> 导航</button></div>
                 <div class="checkin-card-meta"><i class="fas fa-map-pin"></i> ${item.city} · ${dateStr}</div>
                 ${addressLine}
-                ${brandLine}
-                ${supportLine}
+                ${metaLine}
                 ${item.desc ? `<div class="checkin-card-desc">${item.desc}</div>` : ''}
-                <button class="checkin-card-nav" data-lat="${item.coord[0]}" data-lng="${item.coord[1]}" data-name="${navTarget.replace(/"/g, '&quot;')}" onclick="event.stopPropagation();showNavModal(this.dataset.lat,this.dataset.lng,this.dataset.name)"><i class="fas fa-directions"></i> 导航</button>
             </div>`;
         }).join('');
     }
