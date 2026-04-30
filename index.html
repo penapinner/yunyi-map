@@ -553,9 +553,9 @@
             <div class="sidebar-header">
                 <h3><i class="fas fa-plane-departure" style="color:var(--accent);margin-right:8px;"></i>行程</h3>
                 <div class="sidebar-view-toggle">
-                    <button class="sidebar-view-btn active" id="btnList" onclick="switchView('list')"><i class="fas fa-list"></i> 列表</button>
+                    <button class="sidebar-view-btn active" id="btnCheckin" onclick="switchView('checkin')"><i class="fas fa-map-marker-alt"></i> 打卡</button>
                     <button class="sidebar-view-btn" id="btnCalendar" onclick="switchView('calendar')"><i class="fas fa-calendar-alt"></i> 日历</button>
-                    <button class="sidebar-view-btn" id="btnCheckin" onclick="switchView('checkin')"><i class="fas fa-map-marker-alt"></i> 打卡</button>
+                    <button class="sidebar-view-btn" id="btnList" onclick="switchView('list')"><i class="fas fa-list"></i> 列表</button>
                 </div>
             </div>
             <div id="listView">
@@ -743,7 +743,7 @@
     let calendarMonth = _now.getMonth();
     let selectedDate = null;
     let activeItemId = null;
-    let map, mapLayers = [], baseLayers = {};
+    let map, mapLayers = [];
     let statsOpen = true;
     let timeStart = null, timeEnd = null;
     let timeMonths = [];
@@ -864,21 +864,12 @@
         map = L.map('map', { center: [30, 110], zoom: 4, zoomControl: false });
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // ArcGIS 矢量底图（默认）
-        baseLayers.arcgis = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; <a href="https://www.arcgis.com/">Esri</a>',
-            maxZoom: 20
-        }).addTo(map);
-
         // 腾讯地图底图（GCJ-02 坐标系，注意 y 轴用负值）
-        baseLayers.tencent = L.tileLayer('https://rt{s}.map.gtimg.com/realtimerender?z={z}&x={x}&y={-y}&type=vector&style=0', {
+        L.tileLayer('https://rt{s}.map.gtimg.com/realtimerender?z={z}&x={x}&y={-y}&type=vector&style=0', {
             subdomains: '0123',
             attribution: '&copy; <a href="https://map.qq.com/">腾讯地图</a>',
             maxZoom: 18
-        });
-
-        // 底图切换控件
-        L.control.layers(baseLayers, null, { position: 'topright', collapsed: false }).addTo(map);
+        }).addTo(map);
 
         renderMap();
     }
@@ -1550,7 +1541,6 @@
             // 导航目标：优先 城市+地址+名称，其次 城市+名称
             const navTarget = item.address
                 ? `${item.city}${item.address}${item.name}` : `${item.city}${item.name}`;
-            const safeNavTarget = navTarget.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             return `<div class="checkin-card" onclick="flyToCheckin(${item.coord[0]},${item.coord[1]})">
                 <div class="checkin-card-header">
                     <span class="checkin-card-tag tag-${item.category}">${cat.name}</span>
@@ -1561,7 +1551,7 @@
                 ${brandLine}
                 ${supportLine}
                 ${item.desc ? `<div class="checkin-card-desc">${item.desc}</div>` : ''}
-                <button class="checkin-card-nav" onclick="event.stopPropagation();showNavModal(${item.coord[0]},${item.coord[1]},'${safeNavTarget}')"><i class="fas fa-directions"></i> 导航</button>
+                <button class="checkin-card-nav" data-lat="${item.coord[0]}" data-lng="${item.coord[1]}" data-name="${navTarget.replace(/"/g, '&quot;')}" onclick="event.stopPropagation();showNavModal(this.dataset.lat,this.dataset.lng,this.dataset.name)"><i class="fas fa-directions"></i> 导航</button>
             </div>`;
         }).join('');
     }
