@@ -339,10 +339,10 @@
 
         /* ===== Checkin Categories ===== */
         :root {
-            --cat-love: #E91E63;
+            --cat-love: #00ACC1;
             --cat-h52: #FF5722;
             --cat-biz: #9C27B0;
-            --cat-support: #FF9800;
+            --cat-support: #FF69B4;
             --cat-shop: #4CAF50;
         }
         .category-tabs {
@@ -526,7 +526,7 @@
             </div>
 
             <!-- Stats Panel -->
-            <div class="stats-panel open" id="statsPanel">
+            <div class="stats-panel" id="statsPanel">
                 <div class="stats-panel-header">
                     <h3><i class="fas fa-chart-bar"></i> 数据统计</h3>
                     <button class="stats-close-btn" onclick="toggleStats()"><i class="fas fa-times"></i></button>
@@ -558,7 +558,7 @@
                     <button class="sidebar-view-btn" id="btnList" onclick="switchView('list')"><i class="fas fa-list"></i> 列表</button>
                 </div>
             </div>
-            <div id="listView">
+            <div id="listView" style="display:none;">
                 <div class="filter-tabs" id="filterTabsList">
                     <button class="filter-tab active" onclick="filterTrips('all', this)">全部</button>
                     <button class="filter-tab" onclick="filterTrips('yunqi', this)">云旗</button>
@@ -585,6 +585,10 @@
                     <button class="category-tab" onclick="filterCheckin('biz', this)"><span class="cat-dot cat-biz"></span>活动商务</button>
                     <button class="category-tab" onclick="filterCheckin('support', this)"><span class="cat-dot cat-support"></span>应援打卡</button>
                     <button class="category-tab" onclick="filterCheckin('shop', this)"><span class="cat-dot cat-shop"></span>主题商店</button>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-left:auto;cursor:pointer;white-space:nowrap;">
+                        <input type="checkbox" id="showCheckinMap" onchange="toggleCheckinMap(this.checked)">
+                        显示在地图上
+                    </label>
                 </div>
                 <div class="checkin-stats" id="checkinStats"></div>
                 <div class="checkin-list" id="checkinList"></div>
@@ -600,9 +604,9 @@
             </div>
             <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
                 <button class="nav-btn" onclick="openNavApp('amap')"><i class="fas fa-map-marked-alt" style="color:#3182CE;"></i> 高德地图</button>
-                <button class="nav-btn" onclick="openNavApp('baidu')"><i class="fas fa-map" style="color:#E53935;"></i> 百度地图</button>
+                <button class="nav-btn" onclick="openNavApp('apple')"><i class="fab fa-apple" style="color:#000;"></i> 苹果地图</button>
                 <button class="nav-btn" onclick="openNavApp('tencent')"><i class="fas fa-location-arrow" style="color:#07C160;"></i> 腾讯地图</button>
-                <button class="nav-btn" onclick="openNavApp('copy')"><i class="fas fa-copy" style="color:#999;"></i> 复制坐标</button>
+                <button class="nav-btn" onclick="openNavApp('baidu')"><i class="fas fa-map" style="color:#E53935;"></i> 百度地图</button>
             </div>
         </div>
     </div>
@@ -737,14 +741,15 @@
 
     // ===== State =====
     let currentFilter = 'all';
-    let currentView = 'list';
+    let currentView = 'checkin';
     const _now = new Date();
     let calendarYear = _now.getFullYear();
     let calendarMonth = _now.getMonth();
     let selectedDate = null;
     let activeItemId = null;
     let map, mapLayers = [];
-    let statsOpen = true;
+    const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let statsOpen = !isMobile;
     let timeStart = null, timeEnd = null;
     let timeMonths = [];
     let echartsInstances = [];
@@ -972,7 +977,7 @@
         document.getElementById('calendarView').style.display = view === 'calendar' ? 'flex' : 'none';
         document.getElementById('checkinView').style.display = view === 'checkin' ? 'flex' : 'none';
         if (view === 'calendar') renderCalendar();
-        if (view === 'checkin') renderCheckinMap();
+        if (view === 'checkin' && document.getElementById('showCheckinMap').checked) renderCheckinMap();
     }
 
     // ===== List Rendering =====
@@ -1404,10 +1409,10 @@
 
     // ===== Checkin (打卡) =====
     const CATEGORIES = {
-        love: { name: '爱情圣地', color: '#E91E63' },
+        love: { name: '爱情圣地', color: '#00ACC1' },
         h52: { name: '52圣地', color: '#FF5722' },
         biz: { name: '活动商务', color: '#9C27B0' },
-        support: { name: '应援打卡', color: '#FF9800' },
+        support: { name: '应援打卡', color: '#FF69B4' },
         shop: { name: '主题商店', color: '#4CAF50' }
     };
 
@@ -1515,7 +1520,7 @@
         document.querySelectorAll('#categoryTabs .category-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         renderCheckinList();
-        renderCheckinMap();
+        if (document.getElementById('showCheckinMap').checked) renderCheckinMap();
     }
 
     function getFilteredCheckins() {
@@ -1560,11 +1565,20 @@
         map.flyTo([lat, lng], 14, { duration: 1 });
     }
 
+    function toggleCheckinMap(show) {
+        if (show) {
+            renderCheckinMap();
+        } else {
+            // 移除所有打卡标记
+            mapLayers = mapLayers.filter(l => { if (l._isCheckin) { map.removeLayer(l); return false; } return true; });
+        }
+    }
+
     function renderCheckinMap() {
         // 移除旧的打卡标记
         mapLayers = mapLayers.filter(l => { if (l._isCheckin) { map.removeLayer(l); return false; } return true; });
         const filtered = getFilteredCheckins();
-        const catColors = { love: '#E91E63', h52: '#FF5722', biz: '#9C27B0', support: '#FF9800', shop: '#4CAF50' };
+        const catColors = { love: '#00ACC1', h52: '#FF5722', biz: '#9C27B0', support: '#FF69B4', shop: '#4CAF50' };
         filtered.forEach(item => {
             if (!item.coord) return;
             const color = catColors[item.category] || '#3182CE';
@@ -1595,22 +1609,18 @@
         const name = encodeURIComponent(pendingNavName);
         let url;
         switch(type) {
+            case 'apple':
+                url = `https://maps.apple.com/?daddr=${name}`;
+                break;
             case 'amap':
                 url = `https://uri.amap.com/navigation?to=${name}&mode=bus&callnative=1`;
-                break;
-            case 'baidu':
-                url = `https://api.map.baidu.com/direction?destination=name:${name}&mode=transit&output=html`;
                 break;
             case 'tencent':
                 url = `https://apis.map.qq.com/uri/v1/routeplan?to=${name}&type=drive`;
                 break;
-            case 'copy':
-                if (pendingNavCoord) {
-                    const [lat, lng] = pendingNavCoord;
-                    navigator.clipboard.writeText(`${lat},${lng}`).then(() => showToast('坐标已复制'));
-                }
-                closeModal('navModal');
-                return;
+            case 'baidu':
+                url = `https://api.map.baidu.com/direction?destination=name:${name}&mode=transit&output=html`;
+                break;
         }
         window.open(url, '_blank');
         closeModal('navModal');
@@ -1619,11 +1629,16 @@
     loadFromCloud().then(() => {
         loadCheckins();
         tryGetUserLocation();
-        // Stats panel is open by default, render charts after a short delay
-        setTimeout(() => {
-            renderCharts();
-            resizeCharts();
-        }, 300);
+        switchView('checkin');
+        // 设置统计面板初始状态
+        document.getElementById('statsPanel').classList.toggle('open', statsOpen);
+        document.getElementById('btnStats').classList.toggle('active', statsOpen);
+        if (statsOpen) {
+            setTimeout(() => {
+                renderCharts();
+                resizeCharts();
+            }, 300);
+        }
 
         setTimeout(() => {
             const coords = allItems.filter(i => i.coord).map(i => i.coord);
